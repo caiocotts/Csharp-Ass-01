@@ -18,8 +18,11 @@ public class HomeController : Controller
         return View();
     }
 
-    public IActionResult ManageEvents()
-    {
+    public IActionResult ManageEvents() {
+        return View();
+    }
+    
+    public IActionResult TicketPurchasing() {
         return View();
     }
 
