@@ -17,15 +17,7 @@ public class HomeController : Controller
     {
         return View();
     }
-
-    public IActionResult ManageEvents() {
-        return View();
-    }
     
-    public IActionResult TicketPurchasing() {
-        return View();
-    }
-
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()
     {
