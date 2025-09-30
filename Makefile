@@ -14,6 +14,10 @@ mdown:
 	dotnet ef migrations remove
 .PHONY: mdown
 
+status:
+	docker compose ps
+.PHONY: status
+
 migration:
 	@if [ -z "${name}" ]; then echo "Usage: make migration name=name_of_migration_file"; exit 1; fi
 	 dotnet ef migrations add ${name}
