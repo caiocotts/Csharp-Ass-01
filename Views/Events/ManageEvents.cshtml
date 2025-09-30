@@ -23,3 +23,34 @@
     ticket availability (e.g., alert if available tickets < 5).
      Basic Data Entry: Enable users to add, update, and delete events.
 </p>
+
+<form>
+    <fieldset>
+        <legend>Add New Events</legend>
+        <label  for="Title">Event Title</label>
+        <input id="Title"></input>
+        <br>
+        <br>
+        <label for="Category">Category</label>
+        <select id="Category">
+            <option>--Select--</option>
+            <option>Webinar</option>
+            <option>Concert</option>
+            <option>Workshop</option>
+            <option>Conference</option>
+        </select>
+        <br> 
+        <br>
+        <label for="event-date">Date and Time:</label>
+        <input type ="date" id="event-date"></input>
+        <input type="time" id="event-time"></input>
+        <br>
+        <br>
+        <label for ="price">Ticket Price</label>
+        <input id="price"></input>
+        <br>
+        <br>
+        <label for="avail-tickets">Avaliable Tickets</label>
+        <input id="avail-tickets"></input>        
+    </fieldset>
+</form>
