@@ -19,6 +19,7 @@ public class EventManagerController(AppDbContext context) : Controller
         if (!ModelState.IsValid) return View(anEvent);
 
         anEvent.EventDate = ToUtc(anEvent.EventDate);
+        anEvent.PricePerTicket = Math.Round(anEvent.PricePerTicket, 2);
         context.Events.Add(anEvent);
         context.SaveChanges();
         return RedirectToAction("Create");
@@ -33,9 +34,19 @@ public class EventManagerController(AppDbContext context) : Controller
     }
 
     [HttpGet]
-    public IActionResult Delete(int id)
+    public IActionResult DeleteConfirmation(int id)
     {
         var anEvent = context.Events.FirstOrDefault(e => e.Id == id);
         return anEvent == null ? NotFound() : View(anEvent);
+    }
+
+    [HttpPost]
+    public IActionResult Delete(int id)
+    {
+        var anEvent = context.Events.Find(id);
+        if (anEvent == null) return NotFound();
+        context.Events.Remove(anEvent);
+        context.SaveChanges();
+        return RedirectToAction("ManageEvents");
     }
 }

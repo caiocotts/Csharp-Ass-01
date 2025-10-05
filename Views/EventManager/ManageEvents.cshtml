@@ -20,16 +20,16 @@
         </tr>
         </thead>
         <tbody>
-        @foreach (var e in Model)
+        @foreach (var anEvent in Model)
         {
             <tr>
-                <td>@e.Id</td>
-                <td>@e.Title</td>
-                <td>@e.Category</td>
-                <td>@e.EventDate</td>
-                <td>@e.PricePerTicket</td>
+                <td>@anEvent.Id</td>
+                <td>@anEvent.Title</td>
+                <td>@anEvent.Category</td>
+                <td>@anEvent.EventDate</td>
+                <td>$@anEvent.PricePerTicket</td>
                 <td>
-                    <a asp-action="Delete" asp-route-id="@e.Id" class="btn btn-danger">Delete</a>
+                    <a asp-action="DeleteConfirmation" asp-route-id="@anEvent.Id" class="btn btn-danger">Delete</a>
                 </td>
             </tr>
         }
