@@ -37,8 +37,11 @@
                 
                   
                  
-                    @* <td> <a asp-action="Update" asp-route-id="@Event.ProjectId" class="btn btn-info">Update</a> *@
-                    @*<a asp-action="Delete" asp-route-id="@Event.ProjectId" class="btn btn-danger">Delete</a> </td>*@
+                <td>
+                    <a asp-action="Create" asp-route-id="@Event.Id" class="btn btn-info">Update</a>
+                    <a asp-action="Delete" asp-route-id="@Event.Id" class="btn btn-danger">Delete</a>
+                    <a asp-action="Edit" asp-route-id="@Event.Id" class="btn btn-danger">Delete</a>
+                </td>
                  
             
                 <!-- Render other project properties as needed --> 
