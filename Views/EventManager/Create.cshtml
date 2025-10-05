@@ -1,0 +1,13 @@
+@model Event
+
+@{
+    Layout = null;
+}
+
+<h2>Create Project</h2>
+<br>
+<form asp-action="Create" method="post">
+    <div class="form-group">
+        <label asp-for="Title"></label>
+    </div>
+</form>

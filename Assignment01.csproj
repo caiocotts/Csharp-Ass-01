@@ -7,7 +7,9 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <AdditionalFiles Include="Views\Events\ManageEvents.cshtml" />
+      <AdditionalFiles Include="Views\EventManager\Create.cshtml" />
+      <AdditionalFiles Include="Views\EventManager\Delete.cshtml" />
+      <AdditionalFiles Include="Views\EventVisitor\EventBrowser.cshtml" />
       <AdditionalFiles Include="Views\Tickets\TicketPurchasing.cshtml" />
     </ItemGroup>
 
@@ -24,6 +26,12 @@
 
     <ItemGroup>
       <Folder Include="Migrations\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="Views\EventsManager\Create.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\EventsManager\EventBrowser.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\EventsManager\ManageEvents.cshtml" />
     </ItemGroup>
 
 </Project>
