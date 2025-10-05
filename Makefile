@@ -30,14 +30,12 @@ logs:
 
 # create a new migration file
 migration:
-	@if [ "$(OS)" = "Windows_NT" ]; \
-	then \
-		if not defined name ( echo Usage: make migration name=name_of_migration_file & exit /b 1 ); \
-		dotnet ef migrations add %name%; \
-	else \
-		if [ -z "${name}" ]; then echo "Usage: make migration name=name_of_migration_file"; exit 1; fi; \
-		dotnet ef migrations add ${name}; \
-	fi
+	@if [ "$(OS)" = "Windows_NT" ]; then \
+  		dotnet ef migrations add "$(name)"; \
+ 	else \
+  	if [ -z "$(name)" ]; then echo "Usage: make migration name=name_of_migration_file"; exit 1; fi; \
+  		dotnet ef migrations add "$(name)"; \
+ 	fi
 .PHONY: migration
 
 # clean up the docker container and the database data

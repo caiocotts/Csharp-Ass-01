@@ -9,7 +9,6 @@ public class AppDbContext : DbContext
     {
     }
 
-    public DbSet<Category> Categories { get; set; }
     public DbSet<Event> Events { get; set; }
     public DbSet<Purchase> Purchases { get; set; }
     public DbSet<User> Users { get; set; }
