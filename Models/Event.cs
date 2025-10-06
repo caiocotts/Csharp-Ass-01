@@ -9,6 +9,7 @@ public class Event
     public string Category { get; set; } = "";
     [DataType(DataType.Date)] public DateTime EventDate { get; set; }
     public double PricePerTicket { get; set; }
+    public int AvailableTickets { get; set; }
 
     // Navigation Props
     public ICollection<Purchase>? Purchases { get; set; }
