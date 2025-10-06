@@ -1,36 +1,20 @@
+@model Event;
 
-@{  // we will all get this from the db
-    ViewData["title"] = "EventTitle"; 
-    ViewData["eventDescription"] = "EventDescription";
-    ViewData["ticketPrice"] = "ticketPrice";
-    ViewData["numberOfTicketsToPurchase"] = "numberOfTicketsToPurchase";
+@{
+    ViewBag.Title = "Purchasing ";
+    Layout = "_Layout";
 }
 
-<h1>@ViewData["title"]</h1>
-<p>@ViewData["eventDescription"]</p>
-
-
-<button onclick="addingTickets('-')">-</button> 
-<span id="ticketCount">1</span> 
-<button onclick="addingTickets('+')">+</button>
-<span id="totalPrice">$ @ViewData["ticketPrice"]</span>
-<br><br>
-
-<button onclick="">Purchase</button>
-<script>
-    let numberOfTickets = 1;
-    let maxTickets = 500; //TODO -> // ViewData["numberOfTicketsToPurchase"];
-    let ticketPrice = 20; //TODO -> // ViewData["ticketPrice"];
-    
-    function addingTickets(input){
-        if(input == '+' && numberOfTickets < maxTickets)numberOfTickets++;
-        if(input == '-' && numberOfTickets > 1)numberOfTickets--;
-        document.getElementById('ticketCount').textContent = numberOfTickets;
-        document.getElementById('totalPrice').textContent = '$' + numberOfTickets*ticketPrice;
-    }
-    function addToUserPurchase(){
-        let total = numberOfTickets*ticketPrice;
+<h2>@ViewBag.Title</h2>
+<h3>Are you sure you want to purchase @Model.Title</h3>
+<div>
+    <hr/>
+    <dl class="row">   
+        <p> number of tickets you want to buy</p>
         
-    }
-</script>
+        
+        
+    </dl>
 
+    
+</div>
