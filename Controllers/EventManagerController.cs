@@ -8,15 +8,40 @@ namespace Assignment01.Controllers;
 public class EventManagerController(AppDbContext context) : Controller
 {
     [HttpGet]
-    public async Task<IActionResult> ManageEvents(string searchString)
+    public async Task<IActionResult> ManageEvents(string sortOrder, string searchString)
     {
-        var events = from e in context.Events select e;
-        if (!string.IsNullOrEmpty(searchString))
-        {
-            events = events.Where(e => e.Title.ToUpper().Contains(searchString.ToUpper()));
-        }
+        ViewData["CurrentFilter"] = searchString;
+        ViewData["CurrentSort"] = sortOrder;
+        ViewData["IdSortParm"] = string.IsNullOrEmpty(sortOrder) ? "id_desc" : "";
+        ViewData["TitleSortParm"] = sortOrder == "Title" ? "title_desc" : "Title";
+        ViewData["CategorySortParm"] = sortOrder == "Category" ? "category_desc" : "Category";
+        ViewData["DateSortParm"] = sortOrder == "Date" ? "date_desc" : "Date";
+        ViewData["PriceSortParm"] = sortOrder == "Price" ? "price_desc" : "Price";
+        ViewData["TicketsSortParm"] = sortOrder == "Tickets" ? "tickets_desc" : "Tickets";
 
-        return View(await events.ToListAsync());
+        var eventsQuery = context.Events.AsQueryable();
+
+        if (!string.IsNullOrWhiteSpace(searchString))
+            eventsQuery = eventsQuery.Where(e => e.Title.ToUpper().Contains(searchString.ToUpper()));
+
+        eventsQuery = sortOrder switch
+        {
+            "id_desc" => eventsQuery.OrderByDescending(e => e.Id),
+            "Title" => eventsQuery.OrderBy(e => e.Title),
+            "title_desc" => eventsQuery.OrderByDescending(e => e.Title),
+            "Category" => eventsQuery.OrderBy(e => e.Category),
+            "category_desc" => eventsQuery.OrderByDescending(e => e.Category),
+            "Date" => eventsQuery.OrderBy(e => e.EventDate),
+            "date_desc" => eventsQuery.OrderByDescending(e => e.EventDate),
+            "Price" => eventsQuery.OrderBy(e => e.PricePerTicket),
+            "price_desc" => eventsQuery.OrderByDescending(e => e.PricePerTicket),
+            "Tickets" => eventsQuery.OrderBy(e => e.AvailableTickets),
+            "tickets_desc" => eventsQuery.OrderByDescending(e => e.AvailableTickets),
+            _ => eventsQuery.OrderBy(e => e.Id)
+        };
+
+        var list = await eventsQuery.ToListAsync();
+        return View(list);
     }
 
     [HttpGet]
