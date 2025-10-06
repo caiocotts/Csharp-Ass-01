@@ -1,16 +1,22 @@
 using Assignment01.Data;
 using Assignment01.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Assignment01.Controllers;
 
 public class EventManagerController(AppDbContext context) : Controller
 {
     [HttpGet]
-    public IActionResult ManageEvents()
+    public async Task<IActionResult> ManageEvents(string searchString)
     {
-        var events = context.Events.ToList();
-        return View(events);
+        var events = from e in context.Events select e;
+        if (!string.IsNullOrEmpty(searchString))
+        {
+            events = events.Where(e => e.Title.ToUpper().Contains(searchString.ToUpper()));
+        }
+
+        return View(await events.ToListAsync());
     }
 
     [HttpGet]
