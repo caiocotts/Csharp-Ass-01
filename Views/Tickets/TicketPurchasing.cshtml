@@ -1,9 +1,46 @@
+@model List<Event>
+
 @{
     ViewData["Title"] = "Ticket Purchasing";
 }
 
 <h1>@ViewData["Title"]</h1>
 
-<button>
-    <a class="nav-link text-dark" asp-area="" asp-controller="Tickets" asp-action="purchaseConfirm">ticket purchasing</a>
-</button>
+
+
+@if (Model.Any() )
+{
+    <table class="table">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Title</th>
+            <th>Category</th>
+            <th>Event Date</th>
+            <th>Price per Ticket</th>
+            <th>Available Tickets</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var anEvent in Model)
+        {
+            <tr>
+                <td>@anEvent.Id</td>
+                <td>@anEvent.Title</td>
+                <td>@anEvent.Category</td>
+                <td>@anEvent.EventDate</td>
+                <td>$@anEvent.PricePerTicket</td>
+                <td>@anEvent.AvailableTickets</td>
+                
+                <td>
+                    <a asp-action="purchaseConfirm" asp-route-id="@anEvent.Id" class="btn btn-danger">purchase</a>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No events available.</p>
+}
