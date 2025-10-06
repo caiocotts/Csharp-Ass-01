@@ -13,6 +13,9 @@ public class EventManagerController(AppDbContext context) : Controller
         return View(events);
     }
 
+    [HttpGet]
+    public IActionResult Create() => View();
+
     [HttpPost]
     public IActionResult Create(Event anEvent)
     {
@@ -22,7 +25,7 @@ public class EventManagerController(AppDbContext context) : Controller
         anEvent.PricePerTicket = Math.Round(anEvent.PricePerTicket, 2);
         context.Events.Add(anEvent);
         context.SaveChanges();
-        return RedirectToAction("Create");
+        return RedirectToAction("ManageEvents");
 
         DateTime ToUtc(DateTime dt) =>
             dt.Kind switch
