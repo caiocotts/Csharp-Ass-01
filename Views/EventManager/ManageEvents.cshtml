@@ -10,6 +10,7 @@
     var priceSort = (string)ViewData["PriceSortParm"]!;
     var ticketsSort = (string)ViewData["TicketsSortParm"]!;
     var currentSort = (string?)ViewData["CurrentSort"] ?? string.Empty;
+    var currentCategory = (ViewData["CurrentCategory"] as string ?? string.Empty).ToLowerInvariant();
 
     string Arrow(string ascKey, string descKey, bool treatEmptyAsAsc = false)
     {
@@ -49,8 +50,53 @@
 
 <form asp-controller="EventManager" asp-action="ManageEvents" method="get">
     <p>
+        <select class="form-select"
+                name="category"
+                style="width: auto; display: inline-block; margin-right: 10px;">
+            @if (string.IsNullOrEmpty(currentCategory))
+            {
+                <option value="" selected>All Categories</option>
+            }
+            else
+            {
+                <option value="">All Categories</option>
+            }
+            @if (currentCategory == "webinar")
+            {
+                <option value="webinar" selected>Webinar</option>
+            }
+            else
+            {
+                <option value="webinar">Webinar</option>
+            }
+            @if (currentCategory == "concert")
+            {
+                <option value="concert" selected>Concert</option>
+            }
+            else
+            {
+                <option value="concert">Concert</option>
+            }
+            @if (currentCategory == "workshop")
+            {
+                <option value="workshop" selected>Workshop</option>
+            }
+            else
+            {
+                <option value="workshop">Workshop</option>
+            }
+            @if (currentCategory == "conference")
+            {
+                <option value="conference" selected>Conference</option>
+            }
+            else
+            {
+                <option value="conference">Conference</option>
+            }
+        </select>
         <label><input type="text" name="searchString" value="@ViewData["CurrentFilter"]"/></label>
         <input type="submit" value="Search" class="btn btn-info"/>
+        <a asp-action="ManageEvents" class="btn btn-secondary" style="margin-left:10px;">Reset</a>
     </p>
     <input type="hidden" name="sortOrder" value="@ViewData["CurrentSort"]"/>
 </form>
@@ -62,22 +108,28 @@
         <thead>
         <tr>
             <th><a class="sort-link" asp-action="ManageEvents" asp-route-sortOrder="@idSort"
-                   asp-route-searchString="@ViewData["CurrentFilter"]" aria-label="Sort by ID">ID <span
+                   asp-route-searchString="@ViewData["CurrentFilter"]" asp-route-category="@ViewData["CurrentCategory"]"
+                   aria-label="Sort by ID">ID <span
                         class="sort-arrow">@idArrow</span></a></th>
             <th><a class="sort-link" asp-action="ManageEvents" asp-route-sortOrder="@titleSort"
-                   asp-route-searchString="@ViewData["CurrentFilter"]" aria-label="Sort by Title">Title <span
+                   asp-route-searchString="@ViewData["CurrentFilter"]" asp-route-category="@ViewData["CurrentCategory"]"
+                   aria-label="Sort by Title">Title <span
                         class="sort-arrow">@titleArrow</span></a></th>
             <th><a class="sort-link" asp-action="ManageEvents" asp-route-sortOrder="@categorySort"
-                   asp-route-searchString="@ViewData["CurrentFilter"]" aria-label="Sort by Category">Category <span
+                   asp-route-searchString="@ViewData["CurrentFilter"]" asp-route-category="@ViewData["CurrentCategory"]"
+                   aria-label="Sort by Category">Category <span
                         class="sort-arrow">@categoryArrow</span></a></th>
             <th><a class="sort-link" asp-action="ManageEvents" asp-route-sortOrder="@dateSort"
-                   asp-route-searchString="@ViewData["CurrentFilter"]" aria-label="Sort by Event Date">Event Date <span
+                   asp-route-searchString="@ViewData["CurrentFilter"]" asp-route-category="@ViewData["CurrentCategory"]"
+                   aria-label="Sort by Event Date">Event Date <span
                         class="sort-arrow">@dateArrow</span></a></th>
             <th><a class="sort-link" asp-action="ManageEvents" asp-route-sortOrder="@priceSort"
-                   asp-route-searchString="@ViewData["CurrentFilter"]" aria-label="Sort by Price per Ticket">Price per
+                   asp-route-searchString="@ViewData["CurrentFilter"]" asp-route-category="@ViewData["CurrentCategory"]"
+                   aria-label="Sort by Price per Ticket">Price per
                     Ticket <span class="sort-arrow">@priceArrow</span></a></th>
             <th><a class="sort-link" asp-action="ManageEvents" asp-route-sortOrder="@ticketsSort"
-                   asp-route-searchString="@ViewData["CurrentFilter"]" aria-label="Sort by Available Tickets">Available
+                   asp-route-searchString="@ViewData["CurrentFilter"]" asp-route-category="@ViewData["CurrentCategory"]"
+                   aria-label="Sort by Available Tickets">Available
                     Tickets <span class="sort-arrow">@ticketsArrow</span></a></th>
             <th></th>
         </tr>
