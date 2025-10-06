@@ -17,6 +17,7 @@
             <th>Category</th>
             <th>Event Date</th>
             <th>Price per Ticket</th>
+            <th>Available Tickets</th>
         </tr>
         </thead>
         <tbody>
@@ -28,6 +29,7 @@
                 <td>@anEvent.Category</td>
                 <td>@anEvent.EventDate</td>
                 <td>$@anEvent.PricePerTicket</td>
+                <td>@anEvent.AvailableTickets</td>
                 <td>
                     <a asp-action="DeleteConfirmation" asp-route-id="@anEvent.Id" class="btn btn-danger">Delete</a>
                 </td>
