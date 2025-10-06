@@ -8,10 +8,11 @@ namespace Assignment01.Controllers;
 public class EventManagerController(AppDbContext context) : Controller
 {
     [HttpGet]
-    public async Task<IActionResult> ManageEvents(string sortOrder, string searchString)
+    public async Task<IActionResult> ManageEvents(string sortOrder, string searchString, string category)
     {
         ViewData["CurrentFilter"] = searchString;
         ViewData["CurrentSort"] = sortOrder;
+        ViewData["CurrentCategory"] = category;
         ViewData["IdSortParm"] = string.IsNullOrEmpty(sortOrder) ? "id_desc" : "";
         ViewData["TitleSortParm"] = sortOrder == "Title" ? "title_desc" : "Title";
         ViewData["CategorySortParm"] = sortOrder == "Category" ? "category_desc" : "Category";
@@ -23,6 +24,9 @@ public class EventManagerController(AppDbContext context) : Controller
 
         if (!string.IsNullOrWhiteSpace(searchString))
             eventsQuery = eventsQuery.Where(e => e.Title.ToUpper().Contains(searchString.ToUpper()));
+
+        if (!string.IsNullOrWhiteSpace(category))
+            eventsQuery = eventsQuery.Where(e => e.Category.ToUpper() == category.ToUpper());
 
         eventsQuery = sortOrder switch
         {
