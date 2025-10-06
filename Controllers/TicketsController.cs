@@ -16,7 +16,25 @@ public class TicketsController (AppDbContext context) : Controller
         if (anEvent == null) return NotFound();
         return View(anEvent);
     }
+    
+/*
+    [HttpPost]
+    public IActionResult confirmPurchase(int eventId, int quantity, double price)
+    {
+        var order = new Purchase() {
+            //PK-ID is automatically increased
+            Cost = quantity*price,
+            Date = DateTime.Now,
+            // FK for UserID
+            EventId = eventId     //FK
+        };
 
+        _context.Orders.Add(order);
+        _context.SaveChanges();
+
+        return RedirectToAction("Confirmation", new { id = order.Id });
+    }
+*/
     
 
 }
