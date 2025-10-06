@@ -12,9 +12,32 @@
     <dl class="row">   
         <p> number of tickets you want to buy</p>
         
-        
-        
+        <label for="quantity">Quantity:</label>
+        <div class="quantity-controls">
+            
+            <form asp-action="purchaseConfirm" asp-controller="Order" method="post">
+                <input type="hidden" name="eventId" value="@Model.Id" />
+                <button type="button" onclick="changeQuantity(-1)">-</button>
+                <input type="number" id="quantity" name="quantity" value="1" min="1" max="@Model.AvailableTickets" readonly>
+                <button type="button" onclick="changeQuantity(1)">+</button>
+                <p id="price">$ @Model.PricePerTicket</p>
+                <button type="submit"> Submit Order </button>
+            </form>
+            <script>
+                function changeQuantity(addOrMinus) {
+                    let input = document.getElementById('quantity');
+                    let newValue = parseInt(input.value) + addOrMinus;
+                    let min = parseInt(input.min);
+                    let max = parseInt(input.max);
+                    let priceDisplay = document.getElementById('price');
+                    
+                    if (newValue >= min && newValue <= max) {
+                        input.value = newValue;
+                        priceDisplay.textContent = "$" + (newValue*@Model.PricePerTicket).toFixed(2);
+                    }
+                    
+                }
+            </script>
+        </div>
     </dl>
-
-    
 </div>
