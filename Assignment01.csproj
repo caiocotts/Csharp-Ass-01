@@ -8,7 +8,6 @@
 
     <ItemGroup>
       <AdditionalFiles Include="Views\EventManager\Create.cshtml" />
-      <AdditionalFiles Include="Views\EventManager\Delete.cshtml" />
       <AdditionalFiles Include="Views\EventVisitor\EventBrowser.cshtml" />
       <AdditionalFiles Include="Views\Tickets\TicketPurchasing.cshtml" />
     </ItemGroup>
