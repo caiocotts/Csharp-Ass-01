@@ -6,6 +6,14 @@
 
 <h2>Manage Events</h2>
 <br/>
+
+<form asp-controller="EventManager" asp-action="ManageEvents" method="get">
+    <p>
+        <label><input type="text" name="searchString"/></label>
+        <input type="submit" value="Search" class="btn btn-info"/>
+    </p>
+</form>
+<br/>
 <a asp-action="Create" class="btn btn-primary">Create New Event</a>
 @if (Model.Any())
 {
