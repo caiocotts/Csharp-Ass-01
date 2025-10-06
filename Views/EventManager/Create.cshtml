@@ -10,18 +10,18 @@
 <form asp-action="Create" method="post">
     <!-- Represents Title Creation-->
     <div class="form-group">
-        <label asp-for="Title" class="control-label"></label>
+        <label asp-for="Title" class="control-label">Event Title</label>
 
         <input asp-for="Title" class="form-control"/>
 
         <span asp-validation-for="Title" class="text-danger"></span>
     </div>
-    
+    <br>
     <!--- Category Creation--->
     <div class="form-group">
-        <label asp-for="Category" class="control-label">Status</label>
+        <label asp-for="Category" class="control-label">Category</label>
         <select asp-for="Category" class="form-control">
-            <option value="">--Select a Status---</option>
+            <option value="">--Select a Category---</option>
             <option value ="Webinar">Webinar</option>
             <option value ="Concert">Concert</option>  
             <option value ="Workshop">Workshop</option>
@@ -29,30 +29,30 @@
         </select>
         
     </div>
-    
+    <br>
     <!--- Implementation of Date and TIme-->
     <div class="form-group">
         
-        <label asp-for="EventDate" class="control-label"></label>
+        <label asp-for="EventDate" class="control-label">Date and Time</label>
         <input asp-for="EventDate"  type ="date" class="form-control" />
 
     </div>
-    
+    <br>
     <div class="form-group">
         
-        <label asp-for="PricePerTicket" class="control-label"></label>
+        <label asp-for="PricePerTicket" class="control-label">Ticket Price</label>
         <input asp-for="PricePerTicket" type-="number" class="form-control"/>
 
     </div>
-
+    <br>
 
     <div class="form-group">
 
-        <label asp-for="AvailableTickets" class="control-label"></label>
+        <label asp-for="AvailableTickets" class="control-label">Avaliable Tickets</label>
         <input asp-for="AvailableTickets" type-="number" class="form-control"/>
 
     </div>
-
+    <br>
     <div class="form-group">
         <input type="submit" value="Create" class="btn btn-primary"/>
         
