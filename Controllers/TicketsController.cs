@@ -20,7 +20,7 @@ public class TicketsController (AppDbContext context) : Controller
 
     [HttpPost]
     public IActionResult AddPurchase(int eventId, int quantity, double price) {
-        Console.WriteLine("RUNNN");
+        
         string id = Request.Cookies["id"];
         
         if (string.IsNullOrEmpty(id)) { //if theres no cookie send to login page
@@ -31,7 +31,7 @@ public class TicketsController (AppDbContext context) : Controller
         var order = new Purchase() {
             //PK-ID is automatically increased
             Cost = quantity*price,
-            Date = DateTime.Now,
+            Date = DateTime.UtcNow,
             UserId = int.Parse(id), //cookies are stored as strings
             EventId = eventId    
         };
