@@ -18,10 +18,11 @@ public class LoginController(AppDbContext context) : Controller {
         return RedirectToAction("Index", "Home"); // Or wherever you want
     }
 
-    public IActionResult CreateUser(string username, string email) {
+    public IActionResult CreateUser(string username, string emailAddress) {
         //TODO add check too see if the email is already in the DB and handle it if it is
+        
         User tempUser = new User(); //intialize
-        tempUser.Email = email; // adds email
+        tempUser.Email = emailAddress; // adds email
         tempUser.Name = username; // adds name
         context.Users.Add(tempUser); // adds the user to the users table
         context.SaveChanges(); //saves the DB
