@@ -19,11 +19,17 @@ public class LoginController(AppDbContext context) : Controller {
     }
 
     public IActionResult CreateUser(string username, string emailAddress) {
-        //TODO add check too see if the email is already in the DB and handle it if it is
+        bool emailAlreadyExists = context.Users.Any(user => user.Email == emailAddress);
+
+        if (emailAlreadyExists) {
+            //TODO make Alert saying email already exists
+            return View();
+        }
         
         User tempUser = new User(); //intialize
         tempUser.Email = emailAddress; // adds email
         tempUser.Name = username; // adds name
+        
         context.Users.Add(tempUser); // adds the user to the users table
         context.SaveChanges(); //saves the DB
         SetCookie(""+ tempUser.Id); // creates cookie  (must be after you save to DB)
