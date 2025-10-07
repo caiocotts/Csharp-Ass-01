@@ -17,24 +17,31 @@ public class TicketsController (AppDbContext context) : Controller
         return View(anEvent);
     }
     
-/*
+
     [HttpPost]
-    public IActionResult confirmPurchase(int eventId, int quantity, double price)
-    {
+    public IActionResult AddPurchase(int eventId, int quantity, double price) {
+        Console.WriteLine("RUNNN");
+        string id = Request.Cookies["id"];
+        
+        if (string.IsNullOrEmpty(id)) { //if theres no cookie send to login page
+            return RedirectToAction("Login", "Login");
+        }
+        
+        
         var order = new Purchase() {
             //PK-ID is automatically increased
             Cost = quantity*price,
             Date = DateTime.Now,
-            // FK for UserID
-            EventId = eventId     //FK
+            UserId = int.Parse(id), //cookies are stored as strings
+            EventId = eventId    
         };
 
-        _context.Orders.Add(order);
-        _context.SaveChanges();
-
-        return RedirectToAction("Confirmation", new { id = order.Id });
+        context.Purchases.Add(order);
+        context.SaveChanges();
+        return RedirectToAction("TicketPurchasing", "Tickets");
     }
-*/
+
     
+   
 
 }

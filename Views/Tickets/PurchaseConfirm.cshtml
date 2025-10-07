@@ -15,7 +15,7 @@
         <label for="quantity">Quantity:</label>
         <div class="quantity-controls">
             
-            <form asp-action="purchaseConfirm" asp-controller="Order" method="post">
+            <form asp-action="AddPurchase" asp-controller="Tickets" method="post">
                 <input type="hidden" name="eventId" value="@Model.Id" />
                 <button type="button" onclick="changeQuantity(-1)">-</button>
                 <input type="number" id="quantity" name="quantity" value="1" min="1" max="@Model.AvailableTickets" readonly>

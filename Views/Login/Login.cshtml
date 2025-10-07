@@ -1,4 +1,13 @@
+<title>LOGIN</title>
 
-
-<title>Login</title>
-<p>I hate everything everybody and anyone</p>
+<form asp-action="CreateUser" asp-controller="Login" method="post">
+    <label>
+        Enter your name:
+        <input type="text" name="username" required>
+    </label>
+    <label>
+        Email Address:
+        <input type="text" name="emailAddress" required/>
+    </label>
+    <button type="submit" class="btn btn-primary">Create User</button>
+</form>
