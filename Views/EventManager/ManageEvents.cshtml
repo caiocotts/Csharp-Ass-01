@@ -1,4 +1,5 @@
-﻿@model List<Event>
+﻿@using Assignment01.Util
+@model List<Event>
 
 @{
     ViewData["Title"] = "Personal Event Management";
@@ -6,13 +7,6 @@
     var sortOrder = ViewData["SortOrder"] as string ?? string.Empty;
     var categoryFilter = ViewData["CategoryFilter"] as string ?? string.Empty;
     var searchString = ViewData["SearchString"] as string ?? string.Empty;
-
-    string Arrow(string ascKey, string descKey)
-    {
-        if (sortOrder == ascKey) return "▲";
-        if (sortOrder == descKey) return "▼";
-        return string.Empty;
-    }
 }
 <style>
     .table th a.sort-link {
@@ -93,7 +87,7 @@
                            asp-route-category="@categoryFilter">
                             @tableHeader.Value
                             <span class="sort-arrow">
-                                @(Arrow(tableHeader.SortAsc, tableHeader.SortDesc))
+                                @(SortArrow.Arrow(sortOrder, tableHeader.SortAsc, tableHeader.SortDesc))
                             </span>
                         </a>
                     </th>

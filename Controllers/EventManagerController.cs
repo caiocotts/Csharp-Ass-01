@@ -14,31 +14,31 @@ public class EventManagerController(AppDbContext context) : Controller
         ViewData["SortOrder"] = sortOrder;
         ViewData["CategoryFilter"] = categoryFilter;
 
-        var eventsQuery = context.Events.AsQueryable();
+        var events = context.Events.AsQueryable();
 
         if (!string.IsNullOrWhiteSpace(searchString))
-            eventsQuery = eventsQuery.Where(e => e.Title.ToUpper().Contains(searchString.ToUpper()));
+            events = events.Where(e => e.Title.ToUpper().Contains(searchString.ToUpper()));
 
         if (!string.IsNullOrWhiteSpace(categoryFilter))
-            eventsQuery = eventsQuery.Where(e => e.Category.ToUpper() == categoryFilter.ToUpper());
+            events = events.Where(e => e.Category.ToUpper() == categoryFilter.ToUpper());
 
-        eventsQuery = sortOrder switch
+        events = sortOrder switch
         {
-            "id_desc" => eventsQuery.OrderByDescending(e => e.Id),
-            "title" => eventsQuery.OrderBy(e => e.Title),
-            "title_desc" => eventsQuery.OrderByDescending(e => e.Title),
-            "category" => eventsQuery.OrderBy(e => e.Category),
-            "category_desc" => eventsQuery.OrderByDescending(e => e.Category),
-            "date" => eventsQuery.OrderBy(e => e.EventDate),
-            "date_desc" => eventsQuery.OrderByDescending(e => e.EventDate),
-            "price" => eventsQuery.OrderBy(e => e.PricePerTicket),
-            "price_desc" => eventsQuery.OrderByDescending(e => e.PricePerTicket),
-            "tickets" => eventsQuery.OrderBy(e => e.AvailableTickets),
-            "tickets_desc" => eventsQuery.OrderByDescending(e => e.AvailableTickets),
-            _ => eventsQuery.OrderBy(e => e.Id)
+            "id_desc" => events.OrderByDescending(e => e.Id),
+            "title" => events.OrderBy(e => e.Title),
+            "title_desc" => events.OrderByDescending(e => e.Title),
+            "category" => events.OrderBy(e => e.Category),
+            "category_desc" => events.OrderByDescending(e => e.Category),
+            "date" => events.OrderBy(e => e.EventDate),
+            "date_desc" => events.OrderByDescending(e => e.EventDate),
+            "price" => events.OrderBy(e => e.PricePerTicket),
+            "price_desc" => events.OrderByDescending(e => e.PricePerTicket),
+            "tickets" => events.OrderBy(e => e.AvailableTickets),
+            "tickets_desc" => events.OrderByDescending(e => e.AvailableTickets),
+            _ => events.OrderBy(e => e.Id)
         };
 
-        var list = await eventsQuery.ToListAsync();
+        var list = await events.ToListAsync();
         return View(list);
     }
 
