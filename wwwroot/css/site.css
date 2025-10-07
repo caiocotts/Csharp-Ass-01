@@ -29,3 +29,49 @@ body {
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
   text-align: start;
 }
+
+.navbar .nav-link{
+  background-color: #363535FF;
+  border: 2px solid #ffffff;
+  color: #fff !important;
+  border-radius: 6px;
+  margin: 0 8px;
+  padding: 8px 16px;
+  transition: all 0.3s ease-in-out;
+
+}
+
+/* Hover - effect*/
+.navbar .nav-link:hover{
+  background-color: #4d4f57;
+  color: #ffffff;
+  border-color: #dddddd;
+  text-decoration: none;
+}
+
+.navbar-nav .nav-item{
+  margin: 0 10px;
+}
+
+.custom-navbar {
+  background-color: #c0bdbd;
+  border-radius: 12px;
+  margin: 10px 20px;
+  padding: 20px 15px;
+}
+
+.display-4{
+  font-weight: bold; 
+  border: 2px solid;
+  border-radius: 15px;
+  padding: 20px;
+  color: white; 
+  background-color:#c0bdbd
+}
+
+.text-muted{
+  background-color: #c0bdbd;
+  padding: 20px;
+  border-radius: 15px;
+  text-align: center;
+}
