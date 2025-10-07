@@ -1,6 +1,15 @@
 <title>LOGIN</title>
 
+@if (TempData["EmailExistsMessage"] is string msg)
+{
+    <script>
+        // Basic escape for single quotes in the message
+        alert('@msg.Replace("'", "\\'")');
+    </script>
+}
+
 <form asp-action="CreateUser" asp-controller="Login" method="post">
+    @Html.AntiForgeryToken()
     <label>
         Enter your name:
         <input type="text" name="username" required>

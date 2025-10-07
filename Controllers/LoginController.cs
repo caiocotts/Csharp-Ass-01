@@ -6,6 +6,7 @@ namespace Assignment01.Controllers;
 
 public class LoginController(AppDbContext context) : Controller {
     // GET
+    [HttpGet]
     public IActionResult Login() {
         return View();
     }
@@ -18,24 +19,32 @@ public class LoginController(AppDbContext context) : Controller {
         return RedirectToAction("Index", "Home"); // Or wherever you want
     }
 
+    [HttpPost]
+    [ValidateAntiForgeryToken]
     public IActionResult CreateUser(string username, string emailAddress) {
-        bool emailAlreadyExists = context.Users.Any(user => user.Email == emailAddress);
+        if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(emailAddress)) {
+            TempData["EmailExistsMessage"] = "Username and Email are required.";
+            return RedirectToAction("Login");
+        }
 
+        // Case-insensitive email check
+        var emailAlreadyExists = context.Users.Any(user => user.Email.ToLower() == emailAddress.ToLower());
+
+        // Show alert and do NOT create a new user if email exists
         if (emailAlreadyExists) {
-            //TODO make Alert saying email already exists
-            return View();
+            TempData["EmailExistsMessage"] = "An account with that email already exists. Please log in or use a different email.";
+            return RedirectToAction("Login");
         }
         
-        User tempUser = new User(); //intialize
-        tempUser.Email = emailAddress; // adds email
-        tempUser.Name = username; // adds name
+        // Create and persist the new user
+        var tempUser = new User {
+            Email = emailAddress,
+            Name = username
+        };
         
         context.Users.Add(tempUser); // adds the user to the users table
         context.SaveChanges(); //saves the DB
-        SetCookie(""+ tempUser.Id); // creates cookie  (must be after you save to DB)
+        SetCookie("" + tempUser.Id); // creates cookie  (must be after you save to DB)
         return RedirectToAction("TicketPurchasing", "Tickets"); 
     }
-
-    
-    
 }
