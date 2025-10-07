@@ -31,11 +31,15 @@ public class TicketsController (AppDbContext context) : Controller
         var order = new Purchase() {
             //PK-ID is automatically increased
             Cost = quantity*price,
+            Quantity = quantity,
             Date = DateTime.UtcNow,
             UserId = int.Parse(id), //cookies are stored as strings
             EventId = eventId    
         };
-
+        
+        var ev = context.Events.Find(eventId);  // Find event by ID
+        if (ev != null) ev.AvailableTickets -= quantity;  // remove the tickets that were purchased
+        
         context.Purchases.Add(order);
         context.SaveChanges();
         return RedirectToAction("TicketPurchasing", "Tickets");
