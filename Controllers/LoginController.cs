@@ -10,6 +10,21 @@ public class LoginController(AppDbContext context) : Controller {
     public IActionResult Login() { 
         return View();
     }
+    
+    
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public IActionResult LoginToSession(string emailAddress) {
+        
+        var user = context.Users.FirstOrDefault(u => u.Email == emailAddress);
+        if (user == null) {
+            TempData["ErrorMessage"] = "User not found. Please check your email.";
+            return RedirectToAction("Login", "Login");
+        }
+        
+        SetCookie(user.Id.ToString());//because cookies need to be string
+        return RedirectToAction("TicketPurchasing", "Tickets");
+    }
     public IActionResult SetCookie(string id) {
         
         Response.Cookies.Append("id", id, new CookieOptions {
