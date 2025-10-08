@@ -7,7 +7,7 @@ namespace Assignment01.Controllers;
 public class LoginController(AppDbContext context) : Controller {
     // GET
     [HttpGet]
-    public IActionResult Login() {
+    public IActionResult Login() { 
         return View();
     }
     public IActionResult SetCookie(string id) {
