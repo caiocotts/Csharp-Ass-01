@@ -18,7 +18,7 @@ public class LoginController(AppDbContext context) : Controller {
         
         var user = context.Users.FirstOrDefault(u => u.Email == emailAddress);
         if (user == null) {
-            TempData["ErrorMessage"] = "User not found. Please check your email.";
+            TempData["ErrorMessage"] = "email not found. re-check email";
             return RedirectToAction("Login", "Login");
         }
         
@@ -37,6 +37,8 @@ public class LoginController(AppDbContext context) : Controller {
     [HttpPost]
     [ValidateAntiForgeryToken]
     public IActionResult CreateUser(string username, string emailAddress) {
+        
+        //TODO review i think we can take this out because the form cant be submitted without these
         if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(emailAddress)) {
             TempData["EmailExistsMessage"] = "Username and Email are required.";
             return RedirectToAction("Login");
@@ -47,7 +49,12 @@ public class LoginController(AppDbContext context) : Controller {
 
         // Show alert and do NOT create a new user if email exists
         if (emailAlreadyExists) {
-            TempData["EmailExistsMessage"] = "An account with that email already exists. Please log in or use a different email.";
+            TempData["ErrorMessage"] = "email already exists. sign in.";
+            
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("user already exists");
+            Console.ResetColor();
+            
             return RedirectToAction("Login");
         }
         
