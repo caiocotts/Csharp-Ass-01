@@ -2,9 +2,72 @@
 
 @{
     ViewData["Title"] = "Ticket Purchasing";
+
+    var sortOrder = ViewData["SortOrder"] as string ?? string.Empty;
 }
 
-<h1>@ViewData["Title"]</h1>
+<style>
+    .table th a.sort-link {
+        color: inherit;
+        text-decoration: none;
+    }
+
+    .table th a.sort-link:hover {
+        color: inherit;
+        text-decoration: none;
+    }
+
+    .sort-arrow {
+        font-size: 0.7rem;
+        line-height: 1;
+    }
+</style>
+<h2>Buy Tickets</h2>
+<br/>
+
+@{
+    var tableHeaders = new[]
+    {
+        (Value: "ID", SortAsc: "", SortDesc: "id_desc"),
+        (Value: "Title", SortAsc: "title", SortDesc: "title_desc"),
+        (Value: "Category", SortAsc: "category", SortDesc: "category_desc"),
+        (Value: "Event Date", SortAsc: "date", SortDesc: "date_desc"),
+        (Value: "Price per Ticket", SortAsc: "price", SortDesc: "price_desc"),
+        (Value: "Available Tickets", SortAsc: "tickets", SortDesc: "tickets_desc")
+    };
+
+    if (Model.Any())
+    {
+        <table class="table">
+            <thead>
+            <tr>
+                @foreach (var tableHeader in tableHeaders)
+                {
+                    <th>
+                        <a class="sort-link"
+                           asp-action="TicketPurchasing"
+                           asp-route-sortOrder="@(sortOrder == tableHeader.SortAsc ? tableHeader.SortDesc : tableHeader.SortAsc)"
+                        >
+                            @tableHeader.Value
+                            <span class="sort-arrow">
+                                @(SortArrow.Arrow(sortOrder, tableHeader.SortAsc, tableHeader.SortDesc))
+                            </span>
+                        </a>
+                    </th>
+                }
+
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var anEvent in Model)
+            {
+                <tr>
+                    <td>@anEvent.Id</td>
+                    <td>@anEvent.Title</td>
+                    <td>@anEvent.Category</td>
+                    <td>@anEvent.EventDate</td>
+                    <td>$@anEvent.PricePerTicket</td>
+                    <td>@anEvent.AvailableTickets</td>
 
 
 
