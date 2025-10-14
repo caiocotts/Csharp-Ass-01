@@ -1,4 +1,3 @@
-@using Assignment01.Util
 @model List<Event>
 
 @{
@@ -70,16 +69,41 @@
                     <td>$@anEvent.PricePerTicket</td>
                     <td>@anEvent.AvailableTickets</td>
 
-                    <td>
-                        <a asp-action="purchaseConfirm" asp-route-id="@anEvent.Id" class="btn btn-danger">purchase</a>
-                    </td>
-                </tr>
-            }
-            </tbody>
-        </table>
-    }
-    else
-    {
-        <p>No events available.</p>
-    }
+
+
+@if (Model.Any() )
+{
+    <table class="table">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Title</th>
+            <th>Category</th>
+            <th>Event Date</th>
+            <th>Price per Ticket</th>
+            <th>Available Tickets</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var anEvent in Model)
+        {
+            <tr>
+                <td>@anEvent.Id</td>
+                <td>@anEvent.Title</td>
+                <td>@anEvent.Category</td>
+                <td>@anEvent.EventDate</td>
+                <td>$@anEvent.PricePerTicket</td>
+                <td>@anEvent.AvailableTickets</td>
+                
+                <td>
+                    <a asp-action="purchaseConfirm" asp-route-id="@anEvent.Id" class="btn btn-danger">purchase</a>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No events available.</p>
 }
