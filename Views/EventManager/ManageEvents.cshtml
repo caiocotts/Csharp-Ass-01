@@ -1,44 +1,121 @@
-﻿@model List<Event>
+﻿@using Assignment01.Util
+@model List<Event>
 
 @{
     ViewData["Title"] = "Personal Event Management";
+
+    var sortOrder = ViewData["SortOrder"] as string ?? string.Empty;
+    var categoryFilter = ViewData["CategoryFilter"] as string ?? string.Empty;
+    var searchString = ViewData["SearchString"] as string ?? string.Empty;
 }
+<style>
+    .table th a.sort-link {
+        color: inherit;
+        text-decoration: none;
+    }
+
+    .table th a.sort-link:hover {
+        color: inherit;
+        text-decoration: none;
+    }
+
+    .sort-arrow {
+        font-size: 0.7rem;
+        line-height: 1;
+    }
+</style>
 
 <h2>Manage Events</h2>
 <br/>
+
+<form asp-controller="EventManager" asp-action="ManageEvents" method="get">
+    <p>
+        <select class="form-select"
+                name="category"
+                style="width: auto; display: inline-block; margin-right: 10px;">
+            <option value="">All Categories</option>
+            @{
+                var categories = new List<string> { "Webinar", "Concert", "Workshop", "Conference" };
+                foreach (var category in categories)
+                {
+                    if (string.Equals(category, categoryFilter, StringComparison.OrdinalIgnoreCase))
+                    {
+                        <option value="@category" selected>@category</option>
+                    }
+                    else
+                    {
+                        <option value="@category">@category</option>
+                    }
+                }
+            }
+        </select>
+        <label>
+            <input type="text" name="searchString" value="@ViewData["CurrentFilter"]"/>
+        </label>
+        <input type="submit" value="Search" class="btn btn-info"/>
+        <a asp-action="ManageEvents" class="btn btn-secondary" style="margin-left:10px;">Reset</a>
+    </p>
+    <input type="hidden" name="sortOrder" value="@sortOrder"/>
+</form>
+<br/>
 <a asp-action="Create" class="btn btn-primary">Create New Event</a>
-@if (Model.Any())
-{
-    <table class="table">
-        <thead>
-        <tr>
-            <th>ID</th>
-            <th>Title</th>
-            <th>Category</th>
-            <th>Event Date</th>
-            <th>Price per Ticket</th>
-            <th>Available Tickets</th>
-        </tr>
-        </thead>
-        <tbody>
-        @foreach (var anEvent in Model)
-        {
+<br/><br/>
+
+@{
+    var tableHeaders = new[]
+    {
+        (Value: "ID", SortAsc: "", SortDesc: "id_desc"),
+        (Value: "Title", SortAsc: "title", SortDesc: "title_desc"),
+        (Value: "Category", SortAsc: "category", SortDesc: "category_desc"),
+        (Value: "Event Date", SortAsc: "date", SortDesc: "date_desc"),
+        (Value: "Price per Ticket", SortAsc: "price", SortDesc: "price_desc"),
+        (Value: "Available Tickets", SortAsc: "tickets", SortDesc: "tickets_desc")
+    };
+
+    if (Model.Any())
+    {
+        <table class="table">
+            <thead>
             <tr>
-                <td>@anEvent.Id</td>
-                <td>@anEvent.Title</td>
-                <td>@anEvent.Category</td>
-                <td>@anEvent.EventDate</td>
-                <td>$@anEvent.PricePerTicket</td>
-                <td>@anEvent.AvailableTickets</td>
-                <td>
-                    <a asp-action="DeleteConfirmation" asp-route-id="@anEvent.Id" class="btn btn-danger">Delete</a>
-                </td>
+                @foreach (var tableHeader in tableHeaders)
+                {
+                    <th>
+                        <a class="sort-link"
+                           asp-action="ManageEvents"
+                           asp-route-sortOrder="@(sortOrder == tableHeader.SortAsc ? tableHeader.SortDesc : tableHeader.SortAsc)"
+                           asp-route-searchString="@searchString"
+                           asp-route-category="@categoryFilter">
+                            @tableHeader.Value
+                            <span class="sort-arrow">
+                                @(SortArrow.Arrow(sortOrder, tableHeader.SortAsc, tableHeader.SortDesc))
+                            </span>
+                        </a>
+                    </th>
+                }
             </tr>
-        }
-        </tbody>
-    </table>
-}
-else
-{
-    <p>No events available.</p>
+            </thead>
+            <tbody>
+            @foreach (var anEvent in Model)
+            {
+                <tr>
+                    <td>@anEvent.Id</td>
+                    <td>@anEvent.Title</td>
+                    <td>@anEvent.Category</td>
+                    <td>@anEvent.EventDate</td>
+                    <td>$@anEvent.PricePerTicket</td>
+                    <td>@anEvent.AvailableTickets</td>
+                    <td>
+                        <a asp-action="DeleteConfirmation" asp-route-id="@anEvent.Id" class="btn btn-danger">
+                            Delete
+                        </a>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>No events available.</p>
+    }
 }

@@ -1,6 +1,7 @@
 using Assignment01.Data;
 using Assignment01.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Assignment01.Controllers;
 
@@ -44,8 +45,4 @@ public class TicketsController (AppDbContext context) : Controller
         context.SaveChanges();
         return RedirectToAction("TicketPurchasing", "Tickets");
     }
-
-    
-   
-
 }
