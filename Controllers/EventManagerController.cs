@@ -81,8 +81,8 @@ public class EventManagerController(AppDbContext context) : Controller
         context.SaveChanges();
         return RedirectToAction("ManageEvents");
     }
-    
-    
+
+
     [HttpGet]
     public IActionResult Edit(int id)
     {
@@ -109,7 +109,7 @@ public class EventManagerController(AppDbContext context) : Controller
             try
             {
                 anEvent.EventDate = DateTime.SpecifyKind(anEvent.EventDate, DateTimeKind.Utc);
-                context.Update(anEvent); 
+                context.Update(anEvent);
                 context.SaveChanges();
                 return RedirectToAction("ManageEvents");
             }
