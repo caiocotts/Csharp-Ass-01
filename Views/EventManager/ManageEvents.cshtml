@@ -8,6 +8,8 @@
     var categoryFilter = ViewData["CategoryFilter"] as string ?? string.Empty;
     var availabilityFilter = ViewData["AvailabilityFilter"] as string ?? "all";
     var searchString = ViewData["SearchString"] as string ?? string.Empty;
+    var startDate = ViewData["StartDate"] as string ?? string.Empty;
+    var endDate = ViewData["EndDate"] as string ?? string.Empty;
 }
 <style>
     .table th a.sort-link {
@@ -50,8 +52,6 @@
                 }
             }
         </select>
-        <label>
-            <input type="text" name="searchString" value="@ViewData["CurrentFilter"]"/>
         <select
             class="form-select"
             name="AvailabilityFilter"
@@ -74,6 +74,11 @@
         <label style="margin-right: 10px;">
             <input type="text" name="searchString" value="@searchString" placeholder="Search by title"/>
         </label>
+        <label style="margin-right: 5px;">From:
+            <input type="date" name="startDate" value="@startDate" />
+        </label>
+        <label style="margin-right: 10px;">To:
+            <input type="date" name="endDate" value="@endDate" />
         </label>
         <input type="submit" value="Search" class="btn btn-info"/>
         <a asp-action="ManageEvents" class="btn btn-secondary" style="margin-left:10px;">Reset</a>
@@ -107,9 +112,10 @@
                            asp-action="ManageEvents"
                            asp-route-sortOrder="@(sortOrder == tableHeader.SortAsc ? tableHeader.SortDesc : tableHeader.SortAsc)"
                            asp-route-searchString="@searchString"
-                           asp-route-category="@categoryFilter">
                            asp-route-categoryFilter="@categoryFilter"
                            asp-route-availabilityFilter="@availabilityFilter"
+                           asp-route-startDate="@startDate"
+                           asp-route-endDate="@endDate">
                             @tableHeader.Value
                             <span class="sort-arrow">
                                 @(SortArrow.Arrow(sortOrder, tableHeader.SortAsc, tableHeader.SortDesc))
@@ -133,7 +139,7 @@
                     <td>@anEvent.Id</td>
                     <td>@anEvent.Title</td>
                     <td>@anEvent.Category</td>
-                    <td>@anEvent.EventDate</td>
+                    <td>@anEvent.EventDate.ToString("yyyy-MM-dd")</td>
                     <td>$@anEvent.PricePerTicket</td>
                     <td>@availableTickets</td>
                     <td>
