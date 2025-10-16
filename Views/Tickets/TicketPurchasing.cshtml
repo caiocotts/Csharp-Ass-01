@@ -24,17 +24,32 @@
         <tbody>
         @foreach (var anEvent in Model)
         {
+            var availableTickets = anEvent.AvailableTickets switch
+            {
+                0 => "SOLD OUT",
+                (< 200) => $"{anEvent.AvailableTickets} | ALMOST GONE!", // removing the "redundant parentheses" will cause the build to fail, so don't do that pls
+                _ => $"{anEvent.AvailableTickets}"
+            };
             <tr>
                 <td>@anEvent.Id</td>
                 <td>@anEvent.Title</td>
                 <td>@anEvent.Category</td>
                 <td>@anEvent.EventDate</td>
                 <td>$@anEvent.PricePerTicket</td>
-                <td>@anEvent.AvailableTickets</td>
+                <td>@availableTickets</td>
                 
-                <td>
-                    <a asp-action="purchaseConfirm" asp-route-id="@anEvent.Id" class="btn btn-danger">purchase</a>
-                </td>
+                @if(availableTickets == "SOLD OUT")
+                {
+                    <td>
+                        <button class="btn btn-secondary" disabled>Sold Out</button>
+                    </td>
+                }
+                else
+                {
+                    <td>
+                        <a asp-action="purchaseConfirm" asp-route-id="@anEvent.Id" class="btn btn-danger">purchase</a>
+                    </td>
+                }
             </tr>
         }
         </tbody>
