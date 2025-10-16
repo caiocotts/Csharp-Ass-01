@@ -8,7 +8,6 @@
 
     <ItemGroup>
       <AdditionalFiles Include="Views\EventManager\Create.cshtml" />
-      <AdditionalFiles Include="Views\EventVisitor\EventBrowser.cshtml" />
       <AdditionalFiles Include="Views\Tickets\TicketPurchasing.cshtml" />
     </ItemGroup>
 
@@ -32,6 +31,7 @@
       <_ContentIncludedByDefault Remove="Views\EventsManager\Create.cshtml" />
       <_ContentIncludedByDefault Remove="Views\EventsManager\EventBrowser.cshtml" />
       <_ContentIncludedByDefault Remove="Views\EventsManager\ManageEvents.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\EventVisitor\EventBrowser.cshtml" />
     </ItemGroup>
 
     <ItemGroup>
