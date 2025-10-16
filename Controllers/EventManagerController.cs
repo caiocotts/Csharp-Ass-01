@@ -1,5 +1,6 @@
 using Assignment01.Data;
 using Assignment01.Models;
+using Assignment01.Util;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,12 +9,22 @@ namespace Assignment01.Controllers;
 public class EventManagerController(AppDbContext context) : Controller
 {
     [HttpGet]
-    public async Task<IActionResult> ManageEvents(string sortOrder, string searchString, string categoryFilter, string availabilityFilter)
+    public async Task<IActionResult> ManageEvents(string sortOrder, string searchString, string categoryFilter,
+        string availabilityFilter, DateTime? startDate, DateTime? endDate)
     {
+        var normalizedStart = startDate?.Date;
+        var normalizedEnd = endDate?.Date;
+        if (normalizedEnd < normalizedStart) // swap if needed
+        {
+            (normalizedStart, normalizedEnd) = (normalizedEnd, normalizedStart);
+        }
+
         ViewData["SearchString"] = searchString;
         ViewData["SortOrder"] = sortOrder;
         ViewData["CategoryFilter"] = categoryFilter;
         ViewData["AvailabilityFilter"] = availabilityFilter;
+        ViewData["StartDate"] = normalizedStart?.ToString("yyyy-MM-dd") ?? string.Empty;
+        ViewData["EndDate"] = normalizedEnd?.ToString("yyyy-MM-dd") ?? string.Empty;
 
         var events = context.Events.AsQueryable();
 
@@ -22,6 +33,24 @@ public class EventManagerController(AppDbContext context) : Controller
 
         if (!string.IsNullOrWhiteSpace(categoryFilter))
             events = events.Where(e => e.Category.ToUpper() == categoryFilter.ToUpper());
+        
+        
+        if (normalizedStart.HasValue && normalizedEnd.HasValue) // filter with both start and end date
+        {
+            var startUtc = DateFormat.ToUtc(normalizedStart.Value);
+            var endExclusiveUtc = DateFormat.ToUtc(normalizedEnd.Value.AddDays(1));
+            events = events.Where(e => e.EventDate >= startUtc && e.EventDate < endExclusiveUtc);
+        }
+        else if (normalizedStart.HasValue) // no end date
+        {
+            var startUtc = DateFormat.ToUtc(normalizedStart.Value);
+            events = events.Where(e => e.EventDate >= startUtc);
+        }
+        else if (normalizedEnd.HasValue) // no start date
+        {
+            var endExclusiveUtc = DateFormat.ToUtc(normalizedEnd.Value.AddDays(1));
+            events = events.Where(e => e.EventDate < endExclusiveUtc);
+        }
 
         if (!string.IsNullOrWhiteSpace(availabilityFilter))
         {
@@ -62,19 +91,11 @@ public class EventManagerController(AppDbContext context) : Controller
     {
         if (!ModelState.IsValid) return View(anEvent);
 
-        anEvent.EventDate = ToUtc(anEvent.EventDate);
+        anEvent.EventDate = DateFormat.ToUtc(anEvent.EventDate);
         anEvent.PricePerTicket = Math.Round(anEvent.PricePerTicket, 2);
         context.Events.Add(anEvent);
         context.SaveChanges();
         return RedirectToAction("ManageEvents");
-
-        DateTime ToUtc(DateTime dt) =>
-            dt.Kind switch
-            {
-                DateTimeKind.Utc => dt,
-                DateTimeKind.Unspecified => DateTime.SpecifyKind(dt, DateTimeKind.Utc),
-                _ => dt.ToUniversalTime()
-            };
     }
 
     [HttpGet]
