@@ -8,11 +8,12 @@ namespace Assignment01.Controllers;
 public class EventManagerController(AppDbContext context) : Controller
 {
     [HttpGet]
-    public async Task<IActionResult> ManageEvents(string sortOrder, string searchString, string categoryFilter)
+    public async Task<IActionResult> ManageEvents(string sortOrder, string searchString, string categoryFilter, string availabilityFilter)
     {
         ViewData["SearchString"] = searchString;
         ViewData["SortOrder"] = sortOrder;
         ViewData["CategoryFilter"] = categoryFilter;
+        ViewData["AvailabilityFilter"] = availabilityFilter;
 
         var events = context.Events.AsQueryable();
 
@@ -21,6 +22,17 @@ public class EventManagerController(AppDbContext context) : Controller
 
         if (!string.IsNullOrWhiteSpace(categoryFilter))
             events = events.Where(e => e.Category.ToUpper() == categoryFilter.ToUpper());
+
+        if (!string.IsNullOrWhiteSpace(availabilityFilter))
+        {
+            events = availabilityFilter.ToUpper() switch
+            {
+                "ALL" => events.OrderBy(e => e.Title),
+                "AVAILABLE" => events.Where(e => e.AvailableTickets > 0).OrderBy(e => e.Title),
+                "SOLD OUT" => events.Where(e => e.AvailableTickets == 0).OrderBy(e => e.Title),
+                _ => events
+            };
+        }
 
         events = sortOrder switch
         {

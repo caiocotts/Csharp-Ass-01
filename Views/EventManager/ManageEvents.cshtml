@@ -6,6 +6,7 @@
 
     var sortOrder = ViewData["SortOrder"] as string ?? string.Empty;
     var categoryFilter = ViewData["CategoryFilter"] as string ?? string.Empty;
+    var availabilityFilter = ViewData["AvailabilityFilter"] as string ?? "all";
     var searchString = ViewData["SearchString"] as string ?? string.Empty;
 }
 <style>
@@ -31,7 +32,7 @@
 <form asp-controller="EventManager" asp-action="ManageEvents" method="get">
     <p>
         <select class="form-select"
-                name="category"
+                name="CategoryFilter"
                 style="width: auto; display: inline-block; margin-right: 10px;">
             <option value="">All Categories</option>
             @{
@@ -51,6 +52,28 @@
         </select>
         <label>
             <input type="text" name="searchString" value="@ViewData["CurrentFilter"]"/>
+        <select
+            class="form-select"
+            name="AvailabilityFilter"
+            style="width: auto; display: inline-block; margin-right: 10px;">
+            @{
+                var availabilityOptions = new List<string> { "All", "Available", "Sold Out" };
+                foreach (var availability in availabilityOptions)
+                {
+                    if (string.Equals(availabilityFilter, availability, StringComparison.OrdinalIgnoreCase))
+                    {
+                        <option value="@availability" selected>@availability</option>
+                    }
+                    else
+                    {
+                        <option value="@availability">@availability</option>
+                    }
+                }
+            }
+        </select>
+        <label style="margin-right: 10px;">
+            <input type="text" name="searchString" value="@searchString" placeholder="Search by title"/>
+        </label>
         </label>
         <input type="submit" value="Search" class="btn btn-info"/>
         <a asp-action="ManageEvents" class="btn btn-secondary" style="margin-left:10px;">Reset</a>
@@ -85,6 +108,8 @@
                            asp-route-sortOrder="@(sortOrder == tableHeader.SortAsc ? tableHeader.SortDesc : tableHeader.SortAsc)"
                            asp-route-searchString="@searchString"
                            asp-route-category="@categoryFilter">
+                           asp-route-categoryFilter="@categoryFilter"
+                           asp-route-availabilityFilter="@availabilityFilter"
                             @tableHeader.Value
                             <span class="sort-arrow">
                                 @(SortArrow.Arrow(sortOrder, tableHeader.SortAsc, tableHeader.SortDesc))
@@ -97,18 +122,25 @@
             <tbody>
             @foreach (var anEvent in Model)
             {
+                var availableTickets = anEvent.AvailableTickets switch
+                {
+                    0 => "SOLD OUT",
+                    (< 200) => $"{anEvent.AvailableTickets} | ALMOST GONE!", // removing the "redundant parentheses" will cause the build to fail, so don't do that pls
+                    _ => $"{anEvent.AvailableTickets}"
+                };
+
                 <tr>
                     <td>@anEvent.Id</td>
                     <td>@anEvent.Title</td>
                     <td>@anEvent.Category</td>
                     <td>@anEvent.EventDate</td>
                     <td>$@anEvent.PricePerTicket</td>
-                    <td>@anEvent.AvailableTickets</td>
+                    <td>@availableTickets</td>
                     <td>
                         <a asp-action="Edit" asp-route-id="@anEvent.Id" class="btn btn-sm btn-warning me-2">
                             Edit
                         </a>
-                        
+
                         <a asp-action="DeleteConfirmation" asp-route-id="@anEvent.Id" class="btn btn-danger">
                             Delete
                         </a>
