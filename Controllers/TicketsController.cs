@@ -15,6 +15,18 @@ public class TicketsController (AppDbContext context) : Controller
     public IActionResult PurchaseConfirm(int id) {
         var anEvent = context.Events.Find(id);
         if (anEvent == null) return NotFound();
+        
+        var userIdString = Request.Cookies["id"];
+        int userId;
+        if (int.TryParse(userIdString, out userId)) {
+            var user = context.Users.Find(userId);
+            ViewBag.UserName = user?.Email ?? "Guest";//put it as guest if not signed in
+        }
+        else
+        {
+            ViewBag.UserName = "Guest";
+        }
+
         return View(anEvent);
     }
     

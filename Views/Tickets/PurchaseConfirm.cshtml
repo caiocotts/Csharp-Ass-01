@@ -11,6 +11,8 @@
     <hr/>
     <dl class="row">   
         <p> number of tickets you want to buy</p>
+        <p> Name: @ViewBag.UserName</p> 
+        <p> DATE: @DateTime.UtcNow </p>
         
         <label for="quantity">Quantity:</label>
         <div class="quantity-controls">
@@ -20,7 +22,7 @@
                 <button type="button" onclick="changeQuantity(-1)">-</button>
                 <input type="number" id="quantity" name="quantity" value="1" min="1" max="@Model.AvailableTickets" readonly>
                 <button type="button" onclick="changeQuantity(1)">+</button>
-                <p id="price">$ @Model.PricePerTicket</p>
+                <p id="price">Total Price: $ @Model.PricePerTicket</p>
                 <button type="submit"> Submit Order </button>
             </form>
             <script>
@@ -33,7 +35,7 @@
                     
                     if (newValue >= min && newValue <= max) {
                         input.value = newValue;
-                        priceDisplay.textContent = "$" + (newValue*@Model.PricePerTicket).toFixed(2);
+                        priceDisplay.textContent = "Total Price: $" + (newValue*@Model.PricePerTicket).toFixed(2);
                     }
                     
                 }
