@@ -81,4 +81,51 @@ public class EventManagerController(AppDbContext context) : Controller
         context.SaveChanges();
         return RedirectToAction("ManageEvents");
     }
+    
+    
+    [HttpGet]
+    public IActionResult Edit(int id)
+    {
+        var anEvent = context.Events.Find(id);
+        if (anEvent == null)
+        {
+            return NotFound();
+        }
+
+        return View(anEvent);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public IActionResult Edit(int id, [Bind("Id,Title,Category,EventDate,PricePerTicket,AvailableTickets")] Event anEvent)
+    {
+        if (id != anEvent.Id)
+        {
+            return NotFound();
+        }
+
+        if (ModelState.IsValid)
+        {
+            try
+            {
+                anEvent.EventDate = DateTime.SpecifyKind(anEvent.EventDate, DateTimeKind.Utc);
+                context.Update(anEvent); 
+                context.SaveChanges();
+                return RedirectToAction("ManageEvents");
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!context.Events.Any(e => e.Id == anEvent.Id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+        }
+
+        return View(anEvent);
+    }
 }

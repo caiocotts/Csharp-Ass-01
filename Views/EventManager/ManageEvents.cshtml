@@ -105,6 +105,10 @@
                     <td>$@anEvent.PricePerTicket</td>
                     <td>@anEvent.AvailableTickets</td>
                     <td>
+                        <a asp-action="Edit" asp-route-id="@anEvent.Id" class="btn btn-sm btn-warning me-2">
+                            Edit
+                        </a>
+                        
                         <a asp-action="DeleteConfirmation" asp-route-id="@anEvent.Id" class="btn btn-danger">
                             Delete
                         </a>

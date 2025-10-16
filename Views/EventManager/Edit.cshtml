@@ -1,0 +1,48 @@
+@model Assignment01.Models.Event
+
+<h2>Edit Event</h2>
+
+<form asp-action="Edit" method="post">
+    <input type="hidden" asp-for="Id" />
+
+    <div class="form-group">
+        <label asp-for="Title" class="control-label">Event Title</label>
+        <input asp-for="Title" class="form-control" />
+        <span asp-validation-for="Title" class="text-danger"></span>
+    </div>
+    <br>
+    <div class="form-group">
+        <label asp-for="Category" class="control-label">Category</label>
+        <select asp-for="Category" class="form-control">
+            <option value="">--Select a Category---</option>
+            <option value="Webinar">Webinar</option>
+            <option value="Concert">Concert</option>
+            <option value="Workshop">Workshop</option>
+            <option value="Conference">Conference</option>
+        </select>
+        <span asp-validation-for="Category" class="text-danger"></span>
+    </div>
+    <br>
+    <div class="form-group">
+        <label asp-for="EventDate" class="control-label">Date and Time</label>
+        <input asp-for="EventDate" type="date" class="form-control" />
+        <span asp-validation-for="EventDate" class="text-danger"></span>
+    </div>
+    <br>
+    <div class="form-group">
+        <label asp-for="PricePerTicket" class="control-label">Ticket Price</label>
+        <input asp-for="PricePerTicket" type="number" class="form-control" />
+        <span asp-validation-for="PricePerTicket" class="text-danger"></span>
+    </div>
+    <br>
+    <div class="form-group">
+        <label asp-for="AvailableTickets" class="control-label">Available Tickets</label>
+        <input asp-for="AvailableTickets" type="number" class="form-control" />
+        <span asp-validation-for="AvailableTickets" class="text-danger"></span>
+    </div>
+    <br>
+    <div class="form-group">
+        <input type="submit" value="Save Changes" class="btn btn-primary" />
+        <a asp-action="ManageEvents" class="btn btn-warning">Back to List</a>
+    </div>
+</form>
