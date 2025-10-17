@@ -1,6 +1,9 @@
 ﻿@using Assignment01.Util
 @model List<Event>
 
+@section Styles{
+    <link rel="stylesheet" href="@Url.Content("~/css/ManageEvents.css")" />
+}
 @{
     ViewData["Title"] = "Personal Event Management";
 
@@ -11,153 +14,141 @@
     var startDate = ViewData["StartDate"] as string ?? string.Empty;
     var endDate = ViewData["EndDate"] as string ?? string.Empty;
 }
-<style>
-    .table th a.sort-link {
-        color: inherit;
-        text-decoration: none;
-    }
 
-    .table th a.sort-link:hover {
-        color: inherit;
-        text-decoration: none;
-    }
+<div class="manage-events-container">
+    <h2>Manage Events</h2>
+    <div class="event-container">
 
-    .sort-arrow {
-        font-size: 0.7rem;
-        line-height: 1;
-    }
-</style>
+        <br/>
 
-<h2>Manage Events</h2>
-<br/>
-
-<form asp-controller="EventManager" asp-action="ManageEvents" method="get">
-    <p>
-        <select class="form-select"
-                name="CategoryFilter"
-                style="width: auto; display: inline-block; margin-right: 10px;">
-            <option value="">All Categories</option>
-            @{
-                var categories = new List<string> { "Webinar", "Concert", "Workshop", "Conference" };
-                foreach (var category in categories)
-                {
-                    if (string.Equals(category, categoryFilter, StringComparison.OrdinalIgnoreCase))
-                    {
-                        <option value="@category" selected>@category</option>
+        <form asp-controller="EventManager" asp-action="ManageEvents" method="get">
+            <p>
+                <select class="form-select"
+                        name="CategoryFilter"
+                        style="width: auto; display: inline-block; margin-right: 10px;">
+                    <option value="">All Categories</option>
+                    @{
+                        var categories = new List<string> { "Webinar", "Concert", "Workshop", "Conference" };
+                        foreach (var category in categories)
+                        {
+                            if (string.Equals(category, categoryFilter, StringComparison.OrdinalIgnoreCase))
+                            {
+                                <option value="@category" selected>@category</option>
+                            }
+                            else
+                            {
+                                <option value="@category">@category</option>
+                            }
+                        }
                     }
-                    else
-                    {
-                        <option value="@category">@category</option>
+                </select>
+                <select
+                    class="form-select"
+                    name="AvailabilityFilter"
+                    style="width: auto; display: inline-block; margin-right: 10px;">
+                    @{
+                        var availabilityOptions = new List<string> { "All", "Available", "Sold Out" };
+                        foreach (var availability in availabilityOptions)
+                        {
+                            if (string.Equals(availabilityFilter, availability, StringComparison.OrdinalIgnoreCase))
+                            {
+                                <option value="@availability" selected>@availability</option>
+                            }
+                            else
+                            {
+                                <option value="@availability">@availability</option>
+                            }
+                        }
                     }
-                }
-            }
-        </select>
-        <select
-            class="form-select"
-            name="AvailabilityFilter"
-            style="width: auto; display: inline-block; margin-right: 10px;">
-            @{
-                var availabilityOptions = new List<string> { "All", "Available", "Sold Out" };
-                foreach (var availability in availabilityOptions)
-                {
-                    if (string.Equals(availabilityFilter, availability, StringComparison.OrdinalIgnoreCase))
-                    {
-                        <option value="@availability" selected>@availability</option>
-                    }
-                    else
-                    {
-                        <option value="@availability">@availability</option>
-                    }
-                }
-            }
-        </select>
-        <label style="margin-right: 10px;">
-            <input type="text" name="searchString" value="@searchString" placeholder="Search by title"/>
-        </label>
-        <label style="margin-right: 5px;">From:
-            <input type="date" name="startDate" value="@startDate" />
-        </label>
-        <label style="margin-right: 10px;">To:
-            <input type="date" name="endDate" value="@endDate" />
-        </label>
-        <input type="submit" value="Search" class="btn btn-info"/>
-        <a asp-action="ManageEvents" class="btn btn-secondary" style="margin-left:10px;">Reset</a>
-    </p>
-    <input type="hidden" name="sortOrder" value="@sortOrder"/>
-</form>
-<br/>
-<a asp-action="Create" class="btn btn-primary">Create New Event</a>
-<br/><br/>
+                </select>
+                <label style="margin-right: 10px;">
+                    <input type="text" name="searchString" value="@searchString" placeholder="Search by title"/>
+                </label>
+                <label style="margin-right: 5px;">From:
+                    <input type="date" name="startDate" value="@startDate" />
+                </label>
+                <label style="margin-right: 10px;">To:
+                    <input type="date" name="endDate" value="@endDate" />
+                </label>
+                <input type="submit" value="Search" class="btn btn-info"/>
+                <a asp-action="ManageEvents" class="btn btn-secondary" style="margin-left:10px;">Reset</a>
+            </p>
+            <input type="hidden" name="sortOrder" value="@sortOrder"/>
+        </form>
+        <br/>
+        <a asp-action="Create" class="btn btn-primary">Create New Event</a>
+        <br/><br/>
 
-@{
-    var tableHeaders = new[]
-    {
-        (Value: "ID", SortAsc: "", SortDesc: "id_desc"),
-        (Value: "Title", SortAsc: "title", SortDesc: "title_desc"),
-        (Value: "Category", SortAsc: "category", SortDesc: "category_desc"),
-        (Value: "Event Date", SortAsc: "date", SortDesc: "date_desc"),
-        (Value: "Price per Ticket", SortAsc: "price", SortDesc: "price_desc"),
-        (Value: "Available Tickets", SortAsc: "tickets", SortDesc: "tickets_desc")
-    };
-
-    if (Model.Any())
-    {
-        <table class="table">
-            <thead>
-            <tr>
-                @foreach (var tableHeader in tableHeaders)
-                {
-                    <th>
-                        <a class="sort-link"
-                           asp-action="ManageEvents"
-                           asp-route-sortOrder="@(sortOrder == tableHeader.SortAsc ? tableHeader.SortDesc : tableHeader.SortAsc)"
-                           asp-route-searchString="@searchString"
-                           asp-route-categoryFilter="@categoryFilter"
-                           asp-route-availabilityFilter="@availabilityFilter"
-                           asp-route-startDate="@startDate"
-                           asp-route-endDate="@endDate">
-                            @tableHeader.Value
-                            <span class="sort-arrow">
-                                @(SortArrow.Arrow(sortOrder, tableHeader.SortAsc, tableHeader.SortDesc))
-                            </span>
-                        </a>
-                    </th>
-                }
-            </tr>
-            </thead>
-            <tbody>
-            @foreach (var anEvent in Model)
+        @{
+            var tableHeaders = new[]
             {
-                var availableTickets = anEvent.AvailableTickets switch
-                {
-                    0 => "SOLD OUT",
-                    (< 200) => $"{anEvent.AvailableTickets} | ALMOST GONE!", // removing the "redundant parentheses" will cause the build to fail, so don't do that pls
-                    _ => $"{anEvent.AvailableTickets}"
-                };
+                (Value: "ID", SortAsc: "", SortDesc: "id_desc"),
+                (Value: "Title", SortAsc: "title", SortDesc: "title_desc"),
+                (Value: "Category", SortAsc: "category", SortDesc: "category_desc"),
+                (Value: "Event Date", SortAsc: "date", SortDesc: "date_desc"),
+                (Value: "Price per Ticket", SortAsc: "price", SortDesc: "price_desc"),
+                (Value: "Available Tickets", SortAsc: "tickets", SortDesc: "tickets_desc")
+            };
 
-                <tr>
-                    <td>@anEvent.Id</td>
-                    <td>@anEvent.Title</td>
-                    <td>@anEvent.Category</td>
-                    <td>@anEvent.EventDate.ToString("yyyy-MM-dd")</td>
-                    <td>$@anEvent.PricePerTicket</td>
-                    <td>@availableTickets</td>
-                    <td>
-                        <a asp-action="Edit" asp-route-id="@anEvent.Id" class="btn btn-sm btn-warning me-2">
-                            Edit
-                        </a>
-
-                        <a asp-action="DeleteConfirmation" asp-route-id="@anEvent.Id" class="btn btn-danger">
-                            Delete
-                        </a>
-                    </td>
-                </tr>
+            if (Model.Any())
+            {
+                <table class="table">
+                    <thead class="top-row">
+                    <tr>
+                        @foreach (var tableHeader in tableHeaders)
+                        {
+                            <th>
+                                <a class="sort-link"
+                                   asp-action="ManageEvents"
+                                   asp-route-sortOrder="@(sortOrder == tableHeader.SortAsc ? tableHeader.SortDesc : tableHeader.SortAsc)"
+                                   asp-route-searchString="@searchString"
+                                   asp-route-categoryFilter="@categoryFilter"
+                                   asp-route-availabilityFilter="@availabilityFilter"
+                                   asp-route-startDate="@startDate"
+                                   asp-route-endDate="@endDate">
+                                    @tableHeader.Value
+                                    <span class="sort-arrow">
+                                        @(SortArrow.Arrow(sortOrder, tableHeader.SortAsc, tableHeader.SortDesc))
+                                    </span>
+                                </a>
+                            </th>
+                        }
+                    </tr>
+                    </thead>
+                    <tbody class="main-table">
+                    @foreach (var anEvent in Model)
+                    {
+                        var availableTickets = anEvent.AvailableTickets switch
+                        {
+                            0 => "SOLD OUT",
+                            (< 200) => $"{anEvent.AvailableTickets} | ALMOST GONE!", // removing the "redundant parentheses" will cause the build to fail, so don't do that pls
+                            _ => $"{anEvent.AvailableTickets}"
+                        };
+                        
+                        <tr class="main-row">
+                            <td>@anEvent.Id</td>
+                            <td>@anEvent.Title</td>
+                            <td>@anEvent.Category</td>
+                            <td>@anEvent.EventDate.ToString("yyyy-MM-dd")</td>
+                            <td>$@anEvent.PricePerTicket</td>
+                            <td>@availableTickets</td>
+                            <td>
+                                <a asp-action="Edit" asp-route-id="@anEvent.Id" class="btn btn-sm btn-warning me-2">
+                                    Edit
+                                </a>
+                                <a asp-action="DeleteConfirmation" asp-route-id="@anEvent.Id" class="btn btn-danger">
+                                    Delete
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
             }
-            </tbody>
-        </table>
-    }
-    else
-    {
-        <p>No events available.</p>
-    }
-}
+            else
+            {
+                <p>No events available.</p>
+            }
+        }
+    </div>
+</div>
