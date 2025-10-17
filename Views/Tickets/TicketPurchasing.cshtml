@@ -1,4 +1,5 @@
 @model List<Event>
+<link rel="stylesheet" href="/css/DarkMode.css">
 
 @{
     ViewData["Title"] = "Ticket Purchasing";
@@ -10,7 +11,7 @@
 
 @if (Model.Any() )
 {
-    <table class="table">
+    <table class="table" id="dark-mode">
         <thead>
         <tr>
             <th>ID</th>
