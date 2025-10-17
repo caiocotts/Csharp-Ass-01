@@ -1,4 +1,5 @@
 @model Event
+<link rel="stylesheet" href="/css/DarkMode.css">
 
 @{
     ViewBag.Title = "Create Project";
@@ -17,7 +18,7 @@
     <div class="form-group">
         <label asp-for="Category" class="control-label">Category</label>
         <select asp-for="Category" class="form-control">
-            <option value="">--Select a Category---</option>
+            <option value="">---Select a Category---</option>
             <option value="Webinar">Webinar</option>
             <option value="Concert">Concert</option>
             <option value="Workshop">Workshop</option>
