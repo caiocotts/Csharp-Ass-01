@@ -120,14 +120,14 @@ button{
 }
 
 .alert-danger {
-    display: block;                       /* full width of parent container */
-    width: 100%;                          /* ensure it stretches */
-    background-color: rgba(255, 77, 77, 0.7); /* partially transparent red */
-    color: white;                         /* text color */
-    padding: 5px 10px;                    /* space around text */
-    border-radius: 5px;                   /* rounded corners */
-    margin-bottom: 10px;                  /* spacing below */
-    text-align: center;                    /* center text horizontally */
-    transition: opacity 0.5s;             /* smooth fade */
-    box-sizing: border-box;               /* include padding in width */
+    display: block;                      
+    width: 100%;                         
+    background-color: rgba(255, 77, 77, 0.7); 
+    color: white;                         
+    padding: 5px 10px;                   
+    border-radius: 5px;                   
+    margin-bottom: 10px;                  
+    text-align: center;                    
+    transition: opacity 0.5s;           
+    box-sizing: border-box;               
 }

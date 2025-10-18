@@ -49,8 +49,7 @@
     const usernameInput = document.getElementById('username');
     const submitBtn = loginForm.querySelector('button[type="submit"]');
     const formTitle = document.getElementById('formTitle');
-
-    // Optional: add a "Back to Login" button
+    
     let loginBtn = document.getElementById('loginBtn');
     if (!loginBtn) {
         loginBtn = document.createElement('button');
@@ -93,6 +92,6 @@
         setTimeout(() => {
             alertBox.style.opacity = '0';           // fade out
             setTimeout(() => alertBox.remove(), 200); // remove from DOM after fade
-        }, 2000); // wait 2 seconds before fading
+        }, 2000); 
     }
 </script>
