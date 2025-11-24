@@ -14,8 +14,7 @@ public class Purchase
     public int EventId { get; set; }
 
     // Navigation Props
-    [Required]
-    public User User { get; set; }
+    
     [Required]
     public Event Event { get; set; }
 }

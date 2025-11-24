@@ -13,7 +13,7 @@ public class TicketsController(AppDbContext context) : Controller
         return View(events);
     }
 
-    public IActionResult PurchaseConfirm(int id)
+    /*public IActionResult PurchaseConfirm(int id)
     {
         var anEvent = context.Events.Find(id);
         if (anEvent == null) return NotFound();
@@ -32,6 +32,7 @@ public class TicketsController(AppDbContext context) : Controller
 
         return View(anEvent);
     }
+    */
 
 
     [HttpPost]
