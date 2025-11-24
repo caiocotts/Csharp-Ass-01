@@ -1,5 +1,6 @@
 using Assignment01.Data;
 using Assignment01.Models;
+using Assignment01.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,59 +10,93 @@ public class TicketsController(AppDbContext context) : Controller
 {
     public IActionResult TicketPurchasing()
     {
-        var events = context.Events.ToList();
-        return View(events);
+        var events = context.Events.AsNoTracking().OrderBy(e => e.EventDate).ToList();
+        var viewModel = new TicketPurchasingViewModel
+        {
+            Events = events,
+            AlertMessage = TempData["TicketAlert"] as string,
+            IsError = string.Equals(TempData["TicketAlertType"] as string, "error", StringComparison.OrdinalIgnoreCase)
+        };
+
+        return View(viewModel);
     }
 
-    /*public IActionResult PurchaseConfirm(int id)
+    [HttpGet]
+    public IActionResult PurchaseConfirm(int id)
     {
-        var anEvent = context.Events.Find(id);
+        var anEvent = context.Events.AsNoTracking().FirstOrDefault(e => e.Id == id);
         if (anEvent == null) return NotFound();
 
-        var userIdString = Request.Cookies["id"];
-        int userId;
-        if (int.TryParse(userIdString, out userId))
+        var viewModel = new PurchaseConfirmationViewModel
         {
-            var user = context.Users.Find(userId);
-            ViewBag.UserName = user?.Email ?? "Guest";//put it as guest if not signed in
-        }
-        else
-        {
-            ViewBag.UserName = "Guest";
-        }
+            EventId = anEvent.Id,
+            EventTitle = anEvent.Title,
+            Category = anEvent.Category,
+            EventDate = anEvent.EventDate,
+            PricePerTicket = anEvent.PricePerTicket,
+            AvailableTickets = anEvent.AvailableTickets,
+            UserDisplayName = ResolveUserDisplayName()
+        };
 
-        return View(anEvent);
+        return View(viewModel);
     }
-    */
-
 
     [HttpPost]
-    public IActionResult AddPurchase(int eventId, int quantity, double price)
+    [ValidateAntiForgeryToken]
+    public IActionResult AddPurchase(int eventId, int quantity)
     {
-
-        string id = Request.Cookies["id"];
-
-        if (string.IsNullOrEmpty(id))
-        { //if theres no cookie send to login page
+        if (!TryGetUserId(out var userId))
+        {
             return RedirectToAction("Login", "Login");
         }
 
-
-        var order = new Purchase()
+        if (quantity <= 0)
         {
-            //PK-ID is automatically increased
-            Cost = quantity * price,
+            SetTicketAlert("Quantity must be at least 1 ticket.", true);
+            return RedirectToAction(nameof(PurchaseConfirm), new { id = eventId });
+        }
+
+        var anEvent = context.Events.FirstOrDefault(e => e.Id == eventId);
+        if (anEvent == null) return NotFound();
+
+        if (quantity > anEvent.AvailableTickets)
+        {
+            SetTicketAlert("Not enough tickets remain for this event.", true);
+            return RedirectToAction(nameof(PurchaseConfirm), new { id = eventId });
+        }
+
+        anEvent.AvailableTickets -= quantity;
+        var order = new Purchase
+        {
+            Cost = Math.Round(quantity * anEvent.PricePerTicket, 2),
             Quantity = quantity,
             Date = DateTime.UtcNow,
-            UserId = int.Parse(id), //cookies are stored as strings
+            UserId = userId,
             EventId = eventId
         };
 
-        var ev = context.Events.Find(eventId);  // Find event by ID
-        if (ev != null) ev.AvailableTickets -= quantity;  // remove the tickets that were purchased
-
         context.Purchases.Add(order);
         context.SaveChanges();
-        return RedirectToAction("TicketPurchasing", "Tickets");
+
+        SetTicketAlert("Purchase completed successfully.", false);
+        return RedirectToAction(nameof(TicketPurchasing));
+    }
+
+    private bool TryGetUserId(out int userId)
+    {
+        userId = 0;
+        var idValue = Request.Cookies["id"];
+        return int.TryParse(idValue, out userId);
+    }
+
+    private string ResolveUserDisplayName()
+    {
+        return TryGetUserId(out var userId) ? $"User #{userId}" : "Guest";
+    }
+
+    private void SetTicketAlert(string message, bool isError)
+    {
+        TempData["TicketAlert"] = message;
+        TempData["TicketAlertType"] = isError ? "error" : "success";
     }
 }
