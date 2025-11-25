@@ -1,10 +1,11 @@
 using Assignment01.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Assignment01.Data;
 
-public class AppDbContext : IdentityDbContext
+public class AppDbContext : IdentityDbContext<IdentityUser>
 {
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     {
@@ -16,6 +17,9 @@ public class AppDbContext : IdentityDbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        base.OnModelCreating(modelBuilder); // apperantly we needed to add this 
+        
+    
         modelBuilder.Entity<Event>()
             .HasMany(e => e.Purchases)
             .WithOne(p => p.Event)
