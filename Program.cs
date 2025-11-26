@@ -8,6 +8,8 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
+builder.Services.AddRazorPages(); // <-- REQUIRED FOR IDENTITY PAGES
+
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
@@ -31,6 +33,9 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseRouting();
 
+// for the razor pages
+app.UseAuthentication(); // <-- REQUIRED BEFORE Authorization
+
 app.UseAuthorization();
 
 app.MapStaticAssets();
@@ -40,5 +45,6 @@ app.MapControllerRoute(
         pattern: "{controller=Home}/{action=Index}/{id?}")
     .WithStaticAssets();
 
+app.MapRazorPages(); // <-- REQUIRED FOR Identity
 
 app.Run();
