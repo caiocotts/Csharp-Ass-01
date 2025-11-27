@@ -3,11 +3,13 @@ using Assignment01.Extensions;
 using Assignment01.Models;
 using Assignment01.Util;
 using Assignment01.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace Assignment01.Controllers;
 
+[Authorize(Roles = "Admin, Manager")]
 public class EventManagerController(AppDbContext context) : Controller
 {
     [HttpGet]
