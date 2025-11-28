@@ -1,6 +1,7 @@
 using Assignment01.Data;
 using Assignment01.Models;
 using Assignment01.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -21,6 +22,7 @@ public class TicketsController(AppDbContext context) : Controller
         return View(viewModel);
     }
 
+    [Authorize]
     [HttpGet]
     public IActionResult PurchaseConfirm(int id)
     {
