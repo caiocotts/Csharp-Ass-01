@@ -27,11 +27,12 @@
                     </li>
                     
                     
-                    @if (User.Identity!.IsAuthenticated && (User.IsInRole("Admin") || User.IsInRole("Manager"))) {
+                    @*@if (User.Identity!.IsAuthenticated && (User.IsInRole("Admin") || User.IsInRole("Manager"))) {} 
+                    cant do this because they need to be able to see it but not access it.*@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="EventManager" asp-action="ManageEvents">Manage Events</a>
                         </li>
-                    }
+                    
                     
                     
                     <li class="nav-item">
