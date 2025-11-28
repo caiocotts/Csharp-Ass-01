@@ -29,7 +29,7 @@ public class Program {
             var userManager = services.GetRequiredService<UserManager<User>>();
             var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
 
-            string[] roleNames = { "Admin", "Manager", "User" };
+            string[] roleNames = { "Admin", "Organizer", "Attendee" };
             foreach (var roleName in roleNames) {
                 if (!await roleManager.RoleExistsAsync(roleName))
                     await roleManager.CreateAsync(new IdentityRole(roleName));
