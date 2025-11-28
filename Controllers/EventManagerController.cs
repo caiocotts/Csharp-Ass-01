@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Assignment01.Controllers;
 
-[Authorize(Roles = "Admin, Manager")]
+[Authorize(Roles = "Admin, Organizer")]
 public class EventManagerController(AppDbContext context) : Controller
 {
     [HttpGet]
