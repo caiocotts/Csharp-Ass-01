@@ -32,6 +32,9 @@ public class EventManagerController(AppDbContext context) : Controller
 
     [HttpGet]
     public IActionResult Create() => View();
+    
+    [HttpGet]
+    public IActionResult Analytics() => View();
 
     [HttpPost]
     [ValidateAntiForgeryToken]

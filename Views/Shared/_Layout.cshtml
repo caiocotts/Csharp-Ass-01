@@ -29,9 +29,13 @@
                     
                     @*@if (User.Identity!.IsAuthenticated && (User.IsInRole("Admin") || User.IsInRole("Manager"))) {} 
                     cant do this because they need to be able to see it but not access it.*@
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="EventManager" asp-action="ManageEvents">Manage Events</a>
-                        </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" asp-area="" asp-controller="EventManager" asp-action="ManageEvents">Manage Events</a>
+                    </li> 
+                    
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" asp-area="" asp-controller="EventManager" asp-action="Analytics">Analytics</a>
+                    </li>
                     
                     
                     
@@ -69,6 +73,7 @@
                     @if (User.Identity.IsAuthenticated) {
                         <a class="nav-link" asp-area="Identity" asp-page="/Account/Manage/Index">Profile</a>
                     }
+                    
                 </ul>
             </div>
         </div>
@@ -82,9 +87,10 @@
 
 <footer class="footer text-muted">
     <div class="container">
-        &copy; 2025 - Group 41: O'Neal Jean, Keagan Cameron, Caio cotts Assignment 1- <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        &copy; 2025 - Group 41: O'Neal Jean, Keagan Cameron, Caio cotts Assignment 2- <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
     </div>
 </footer>
+
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 <script src="~/js/site.js" asp-append-version="true"></script>
