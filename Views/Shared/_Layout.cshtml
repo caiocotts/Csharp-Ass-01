@@ -65,6 +65,10 @@
                             <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Login">Login</a>
                         </li>
                     }
+                    
+                    @if (User.Identity.IsAuthenticated) {
+                        <a class="nav-link" asp-area="Identity" asp-page="/Account/Manage/Index">Profile</a>
+                    }
                 </ul>
             </div>
         </div>
