@@ -20,7 +20,7 @@
     </div>
 
     <div class="chart" id="chart2-container">
-        <canvas id="secondChart"></canvas>
+        <canvas id="monthlyRevenue"></canvas>
     </div>
 </div>
 
@@ -84,10 +84,81 @@
                 new Chart(ctx, config);
            
             });
-        
 </script>
 
-    
+<script>
+    // Fetch data from the server
+    fetch('/EventManager/GetMonthlyRevenueData/')
+        .then(res => res.json())
+        .then(events => {
+            console.log("Fetched data:", JSON.stringify(events, null, 2));
+
+            // If the API returns empty or fails, fallback to dummy data
+            if (!events || events.length === 0) {
+                events = [
+                    { month: "November 2025", revenue: 120 },
+                    { month: "October 2025", revenue: 95 },
+                    { month: "September 2025", revenue: 60 },
+                ];
+            }
+
+            const labels = events.map(e => e.month);
+            const values = events.map(e => e.revenue);
+
+            const data = {
+                labels: labels,
+                datasets: [{
+                    label: 'Revenue',
+                    data: values,
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    pointStyle: 'circle',
+                    pointRadius: 6,
+                    pointHoverRadius: 10
+                }]
+            };
+
+            const config = {
+                type: 'line',
+                data: data,
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { labels: { color: 'white' } },
+                        title: {
+                            display: true,
+                            text: 'Monthly Revenue',
+                            font: { size: 24, weight: 'bold' },
+                            color: 'white'
+                        }
+                    },
+                    scales: {
+                        y : {
+                            ticks: {
+                                color: 'white',
+                                callback: function(value) {
+                                    return '$' + value.toLocaleString();
+                                }
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                color: 'white',
+                            }
+                        }
+                    }
+                }
+            };
+
+            const ctx = document.getElementById('monthlyRevenue').getContext('2d');
+            new Chart(ctx, config);
+        });
+       
+
+</script>
+
+
+
 </body>
 </html>
 

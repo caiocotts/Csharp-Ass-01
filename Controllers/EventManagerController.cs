@@ -89,11 +89,12 @@ public class EventManagerController(AppDbContext context, UserManager<User> user
 
         var now = DateTime.UtcNow;
 
+// Generate the past 3 full months (including the current month if needed)
         var monthRanges = new[]
         {
-            new { Start = now.AddMonths(-1), End = now },       // past month
-            new { Start = now.AddMonths(-2), End = now.AddMonths(-1) }, // previous month
-            new { Start = now.AddMonths(-3), End = now.AddMonths(-2) }  // 3 months ago
+            new { Start = new DateTime(now.Year, now.Month, 1, 0, 0, 0, DateTimeKind.Utc).AddMonths(-2), End = new DateTime(now.Year, now.Month, 1, 0, 0, 0, DateTimeKind.Utc).AddMonths(-1) },
+            new { Start = new DateTime(now.Year, now.Month, 1, 0, 0, 0, DateTimeKind.Utc).AddMonths(-1), End = new DateTime(now.Year, now.Month, 1, 0, 0, 0, DateTimeKind.Utc) },
+            new { Start = new DateTime(now.Year, now.Month, 1, 0, 0, 0, DateTimeKind.Utc), End = now }
         };
 
         double[] revenues = new double[3];
@@ -113,12 +114,10 @@ public class EventManagerController(AppDbContext context, UserManager<User> user
             revenues[i] = query.Sum(p => p.Cost * p.Quantity);
         }
 
-        var result = new
-        {
-            Month1 = revenues[0], // most recent month
-            Month2 = revenues[1], // previous month
-            Month3 = revenues[2]  // month before that
-        };
+        var result = monthRanges.Select((range, i) => new {
+            Month = range.Start.ToString("MMMM yyyy"), // e.g., "November 2025"
+            Revenue = revenues[i]
+        }).ToList();
 
         return Json(result); 
     }
