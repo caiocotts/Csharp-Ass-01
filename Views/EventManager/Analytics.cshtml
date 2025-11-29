@@ -1,18 +1,127 @@
 ﻿
-
-<link rel="stylesheet" href="/css/DarkMode.css">
-
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
 <head>
     <title>Analytics</title>
+    <link rel="stylesheet" href="/css/DarkMode.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body>
-    <div>
-       <h1> Analytics Dashboard</h1>
-    </div>
-</body>
 
+<div>
+    <h1 class="text-center">Analytics Dashboard</h1>
+</div>
+
+<div id="charts-container">
+    <div class="chart" id="chart1-container">
+        <canvas id="bestSellingChart"></canvas>
+    </div>
+
+    <div class="chart" id="chart2-container">
+        <canvas id="secondChart"></canvas>
+    </div>
+</div>
+
+<script>
+            /*fetch('/Events/GetTopSellingEvents')
+                .then(res => res.json())
+                .then(events => {
+
+                    const labels = events.map(e => e.name);
+                    const values = events.map(e => e.sold);
+
+                    const data = {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Tickets Sold',
+                            data: values
+                        }]
+                    };
+
+                    const config = {
+                        type: 'polarArea',
+                        data: data,
+                        options: {
+                            responsive: true,
+                            plugins: {
+                                legend: { position: 'top' },
+                                title: {
+                                    display: true,
+                                    text: 'Top 5 Best-Selling Events'
+                                }
+                            }
+                        }
+                    };
+
+                    const ctx = document.getElementById('bestSellingChart').getContext('2d');
+                    const chart = new Chart(ctx, config);
+                }); */
+            
+            
+                // Dummy data to test
+                const events = [
+                    { name: "Webinar", sold: 120 },
+                    { name: "Concert", sold: 95 },
+                    { name: "Workshop", sold: 60 },
+                    { name: "Conference", sold: 140 },
+                ];
+
+                const labels = events.map(e => e.name);
+                const values = events.map(e => e.sold);
+
+                const data = {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Tickets Sold',
+                        data: values
+                    }]
+                };
+
+                const config = {
+                    type: 'polarArea',
+                    data: data,
+                    options: {
+                        responsive: true,
+                        
+                        plugins: {
+                            legend: {position: 'top'},
+                            title: {
+                                display: true,
+                                text: 'Ticket Sales Per Category',
+                                font: {
+                                    size: 30,
+                                    weight: 'bold',
+                                },
+                                color: 'white',
+                                
+                            }
+                        },
+                        
+                    }
+                };
+
+                const ctx = document.getElementById('bestSellingChart').getContext('2d');
+                new Chart(ctx, config);
+    </script>
+
+    
+</body>
 </html>
+
+<style>
+    #charts-container {
+        display: flex;          
+        gap: 20px;            
+        justify-content: center; 
+        align-items: flex-start;
+    }
+    .chart {
+        width: 750px;
+        height: 750px;
+        border-radius: 10px;
+        border: 1px solid white;
+    }
+   
+</style>
