@@ -64,6 +64,22 @@
         </form>
     }
 </div>
+<style>
+    .input-group.quantity-controls .btn {
+        width: 50px !important;  /* force button width */
+        height: 40px !important; /* optional */
+        flex: 0 0 auto;          /* prevent Bootstrap from resizing */
+    }
+
+    .input-group.quantity-controls input {
+        width: 80px !important;  /* force input width */
+        text-align: center;
+        flex: 0 0 auto;          /* prevent Bootstrap from resizing */
+    }
+
+ 
+    
+</style>
 
 @section Scripts {
     <script>
@@ -100,3 +116,4 @@
         });
     </script>
 }
+
