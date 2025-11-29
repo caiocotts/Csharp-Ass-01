@@ -51,8 +51,11 @@
                                 {
                                     @:Role: Admin
                                 }
-                                else
+                                else if(User.IsInRole("Organizer"))
                                 {
+                                    @:Role: Organizer
+                                }
+                                else {
                                     @:Role: Default User
                                 }
                             </span>

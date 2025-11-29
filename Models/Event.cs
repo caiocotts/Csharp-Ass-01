@@ -26,6 +26,10 @@ public class Event
 
     [Range(0, int.MaxValue)]
     public int AvailableTickets { get; set; }
+    
+    public string? OrganizerId { get; set; } 
+
+    public User? Organizer { get; set; }
 
     public ICollection<Purchase> Purchases { get; set; } = new List<Purchase>();
 }
