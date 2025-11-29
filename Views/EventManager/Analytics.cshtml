@@ -57,7 +57,13 @@
                         responsive: true,
 
                         plugins: {
-                            legend: {position: 'top'},
+                            legend: {
+                                position: 'top',
+                                labels: {
+                                    color: 'white',
+                                }
+                            },
+                            
                             title: {
                                 display: true,
                                 text: 'Ticket Sales Per Category',
@@ -65,9 +71,10 @@
                                     size: 30,
                                     weight: 'bold',
                                 },
-                                color: 'white',
+                                color: 'white'
 
-                            }
+                            },
+                            
                         },
 
                     }
