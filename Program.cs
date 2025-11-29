@@ -35,22 +35,29 @@ public class Program {
                     await roleManager.CreateAsync(new IdentityRole(roleName));
             }
 
-            // Seed admin user
-            var adminUser = await userManager.FindByEmailAsync("admin@example.com");
-            if (adminUser == null) {
-                adminUser = new User {
-                    UserName = "admin@example.com",
-                    Email = "admin@example.com",
-                    FullName = "Admin User",
-                    EmailConfirmed = true
-                };
+            
+            //SEEDING USERS
+            var usersToSeed = new List<(string Email, string Name, string Role)>
+            {
+                ("admin@example.com", "Admin User", "Admin"),
+                ("organizer@example.com", "Organizer User", "Organizer"),
+                ("user@example.com", "Normal User", "Attendee")
+            };
 
-                //ADMIN PASSWORD
-                await userManager.CreateAsync(adminUser, "SecurePassword123!");
-                
-                //ADMIN ROLE DECLARATION
-                await userManager.AddToRoleAsync(adminUser, "Admin");
+            foreach (var (email, name, role) in usersToSeed)
+            {
+                var user = await userManager.FindByEmailAsync(email);
+                if (user == null)
+                {
+                    user = new User { UserName = email, Email = email, FullName = name, EmailConfirmed = true };
+                    var result = await userManager.CreateAsync(user, "SecurePassword123!");
+                    if (!result.Succeeded) throw new Exception(string.Join(", ", result.Errors.Select(e => e.Description)));
+                    await userManager.AddToRoleAsync(user, role);
+                }
             }
+
+            
+            
         }
         // =============================================
 
