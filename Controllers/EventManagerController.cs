@@ -76,12 +76,54 @@ public class EventManagerController(AppDbContext context, UserManager<User> user
         
         return Json(categorySales); 
     }
+    
 
-    /*[HttpGet]
-    public IActionResult GetMonthlyRevenueData() {
-        var monthlyRevenue =  context.Events
-            .Select
-    }*/
+    [HttpGet]
+    public async Task<IActionResult> GetMonthlyRevenueData() {
+        var user = await userManager.GetUserAsync(User);
+
+        if (user == null)
+            return Unauthorized();
+
+        bool isAdmin = await userManager.IsInRoleAsync(user, "Admin");
+
+        var now = DateTime.UtcNow;
+
+        var monthRanges = new[]
+        {
+            new { Start = now.AddMonths(-1), End = now },       // past month
+            new { Start = now.AddMonths(-2), End = now.AddMonths(-1) }, // previous month
+            new { Start = now.AddMonths(-3), End = now.AddMonths(-2) }  // 3 months ago
+        };
+
+        double[] revenues = new double[3];
+
+        for (int i = 0; i < monthRanges.Length; i++)
+        {
+            var query = context.Purchases.AsQueryable();
+
+            if (!isAdmin)
+            {
+                // Only include purchases for events organized by this user
+                query = query.Where(p => p.Event.OrganizerId == user.Id);
+            }
+
+            query = query.Where(p => p.Date >= monthRanges[i].Start && p.Date < monthRanges[i].End);
+
+            revenues[i] = query.Sum(p => p.Cost * p.Quantity);
+        }
+
+        var result = new
+        {
+            Month1 = revenues[0], // most recent month
+            Month2 = revenues[1], // previous month
+            Month3 = revenues[2]  // month before that
+        };
+
+        return Json(result); 
+    }
+    
+    
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(Event anEvent)
