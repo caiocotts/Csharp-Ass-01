@@ -36,6 +36,24 @@ public class EventManagerController(AppDbContext context) : Controller
     [HttpGet]
     public IActionResult Analytics() => View();
 
+    [HttpGet]
+    public IActionResult GetTicketData() {
+        var categorySales = context.Events
+            .Select(e => new {
+                    category = e.Category,
+                    sold = e.Purchases.Sum(p => (int?)p.Quantity) ?? 0
+                
+                })
+            .GroupBy(e => e.category)
+            .Select( g => new {
+                name = g.Key,
+                sold = g.Sum(s => s.sold)
+            })
+            .OrderByDescending(s => s.sold)
+            .ToList();
+        return Json(categorySales);
+    }
+
     [HttpPost]
     [ValidateAntiForgeryToken]
     public IActionResult Create(Event anEvent)

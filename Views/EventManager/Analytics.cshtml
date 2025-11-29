@@ -16,7 +16,7 @@
 
 <div id="charts-container">
     <div class="chart" id="chart1-container">
-        <canvas id="bestSellingChart"></canvas>
+        <canvas id="ticketSalesByCategory"></canvas>
     </div>
 
     <div class="chart" id="chart2-container">
@@ -25,48 +25,17 @@
 </div>
 
 <script>
-            /*fetch('/Events/GetTopSellingEvents')
-                .then(res => res.json())
-                .then(events => {
 
-                    const labels = events.map(e => e.name);
-                    const values = events.map(e => e.sold);
-
-                    const data = {
-                        labels: labels,
-                        datasets: [{
-                            label: 'Tickets Sold',
-                            data: values
-                        }]
-                    };
-
-                    const config = {
-                        type: 'polarArea',
-                        data: data,
-                        options: {
-                            responsive: true,
-                            plugins: {
-                                legend: { position: 'top' },
-                                title: {
-                                    display: true,
-                                    text: 'Top 5 Best-Selling Events'
-                                }
-                            }
-                        }
-                    };
-
-                    const ctx = document.getElementById('bestSellingChart').getContext('2d');
-                    const chart = new Chart(ctx, config);
-                }); */
-            
-            
-                // Dummy data to test
-                const events = [
-                    { name: "Webinar", sold: 120 },
-                    { name: "Concert", sold: 95 },
-                    { name: "Workshop", sold: 60 },
-                    { name: "Conference", sold: 140 },
-                ];
+        // Dummy data to test
+        /*const events = [
+            { name: "Webinar", sold: 120 },
+            { name: "Concert", sold: 95 },
+            { name: "Workshop", sold: 60 },
+            { name: "Conference", sold: 140 },
+    ];*/
+        fetch('/EventManager/GetTicketData')
+            .then(res => res.json())
+            .then(events => {
 
                 const labels = events.map(e => e.name);
                 const values = events.map(e => e.sold);
@@ -77,14 +46,16 @@
                         label: 'Tickets Sold',
                         data: values
                     }]
-                };
+                };  
+                
+                //everthing above here is purely for the data
 
                 const config = {
                     type: 'polarArea',
                     data: data,
                     options: {
                         responsive: true,
-                        
+
                         plugins: {
                             legend: {position: 'top'},
                             title: {
@@ -95,16 +66,19 @@
                                     weight: 'bold',
                                 },
                                 color: 'white',
-                                
+
                             }
                         },
-                        
+
                     }
                 };
 
-                const ctx = document.getElementById('bestSellingChart').getContext('2d');
+                const ctx = document.getElementById('ticketSalesByCategory').getContext('2d');
                 new Chart(ctx, config);
-    </script>
+           
+            });
+        
+</script>
 
     
 </body>
