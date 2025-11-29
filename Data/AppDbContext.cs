@@ -1,9 +1,11 @@
 using Assignment01.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Assignment01.Data;
 
-public class AppDbContext : DbContext
+public class AppDbContext : IdentityDbContext<User>
 {
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     {
@@ -11,10 +13,13 @@ public class AppDbContext : DbContext
 
     public DbSet<Event> Events { get; set; }
     public DbSet<Purchase> Purchases { get; set; }
-    public DbSet<User> Users { get; set; }
+    
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        base.OnModelCreating(modelBuilder); // apperantly we needed to add this 
+        
+    
         modelBuilder.Entity<Event>()
             .HasMany(e => e.Purchases)
             .WithOne(p => p.Event)

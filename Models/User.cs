@@ -1,13 +1,10 @@
-using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Identity;
 
 namespace Assignment01.Models;
 
-public class User
-{
-    [Key] public int Id { get; set; }
-    public string Email { get; set; }
-    public string Name { get; set; }
-
-    // Navigation Props
-    public ICollection<Purchase>? Purchases { get; set; }
+public class User : IdentityUser {
+    public String? FullName  { get; set; }
+    public String? PhoneNumber { get; set; }
+    public DateTime? DateOfBirth { get; set; }
+    public String? ProfilePictureUrl { get; set; }
 }

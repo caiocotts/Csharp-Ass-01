@@ -1,18 +1,17 @@
-﻿@using Assignment01.Util
-@model List<Event>
+﻿@model ManageEventsViewModel
 
 @section Styles{
     <link rel="stylesheet" href="@Url.Content("~/css/ManageEvents.css")" />
 }
 @{
     ViewData["Title"] = "Personal Event Management";
-
-    var sortOrder = ViewData["SortOrder"] as string ?? string.Empty;
-    var categoryFilter = ViewData["CategoryFilter"] as string ?? string.Empty;
-    var availabilityFilter = ViewData["AvailabilityFilter"] as string ?? "all";
-    var searchString = ViewData["SearchString"] as string ?? string.Empty;
-    var startDate = ViewData["StartDate"] as string ?? string.Empty;
-    var endDate = ViewData["EndDate"] as string ?? string.Empty;
+    var filters = Model.Filters;
+    var sortOrder = filters.SortOrder ?? string.Empty;
+    var categoryFilter = filters.CategoryFilter ?? string.Empty;
+    var availabilityFilter = filters.AvailabilityFilter ?? "All";
+    var searchString = filters.SearchString ?? string.Empty;
+    var startDate = filters.StartDateInput;
+    var endDate = filters.EndDateInput;
 }
 
 <div class="manage-events-container">
@@ -27,18 +26,16 @@
                         name="CategoryFilter"
                         style="width: auto; display: inline-block; margin-right: 10px;">
                     <option value="">All Categories</option>
-                    @{
-                        var categories = new List<string> { "Webinar", "Concert", "Workshop", "Conference" };
-                        foreach (var category in categories)
+                    @foreach (var category in Model.CategoryOptions)
+                    {
+                        var isSelected = string.Equals(category, categoryFilter, System.StringComparison.OrdinalIgnoreCase);
+                        if (isSelected)
                         {
-                            if (string.Equals(category, categoryFilter, StringComparison.OrdinalIgnoreCase))
-                            {
-                                <option value="@category" selected>@category</option>
-                            }
-                            else
-                            {
-                                <option value="@category">@category</option>
-                            }
+                            <option value="@category" selected>@category</option>
+                        }
+                        else
+                        {
+                            <option value="@category">@category</option>
                         }
                     }
                 </select>
@@ -46,18 +43,16 @@
                     class="form-select"
                     name="AvailabilityFilter"
                     style="width: auto; display: inline-block; margin-right: 10px;">
-                    @{
-                        var availabilityOptions = new List<string> { "All", "Available", "Sold Out" };
-                        foreach (var availability in availabilityOptions)
+                    @foreach (var availability in Model.AvailabilityOptions)
+                    {
+                        var isSelected = string.Equals(availabilityFilter, availability, System.StringComparison.OrdinalIgnoreCase);
+                        if (isSelected)
                         {
-                            if (string.Equals(availabilityFilter, availability, StringComparison.OrdinalIgnoreCase))
-                            {
-                                <option value="@availability" selected>@availability</option>
-                            }
-                            else
-                            {
-                                <option value="@availability">@availability</option>
-                            }
+                            <option value="@availability" selected>@availability</option>
+                        }
+                        else
+                        {
+                            <option value="@availability">@availability</option>
                         }
                     }
                 </select>
@@ -90,7 +85,7 @@
                 (Value: "Available Tickets", SortAsc: "tickets", SortDesc: "tickets_desc")
             };
 
-            if (Model.Any())
+            if (Model.Events.Any())
             {
                 <table class="table">
                     <thead class="top-row">
@@ -116,22 +111,16 @@
                     </tr>
                     </thead>
                     <tbody class="main-table">
-                    @foreach (var anEvent in Model)
+                    @foreach (var anEvent in Model.Events)
                     {
-                        var availableTickets = anEvent.AvailableTickets switch
-                        {
-                            0 => "SOLD OUT",
-                            (< 200) => $"{anEvent.AvailableTickets} | ALMOST GONE!", // removing the "redundant parentheses" will cause the build to fail, so don't do that pls
-                            _ => $"{anEvent.AvailableTickets}"
-                        };
-                        
+                        var availabilityLabel = TicketInventoryFormatter.FormatAvailability(anEvent.AvailableTickets);
                         <tr class="main-row">
                             <td>@anEvent.Id</td>
                             <td>@anEvent.Title</td>
                             <td>@anEvent.Category</td>
                             <td>@anEvent.EventDate.ToString("yyyy-MM-dd")</td>
                             <td>$@anEvent.PricePerTicket</td>
-                            <td>@availableTickets</td>
+                            <td>@availabilityLabel</td>
                             <td>
                                 <a asp-action="Edit" asp-route-id="@anEvent.Id" class="btn btn-sm btn-warning me-2">
                                     Edit

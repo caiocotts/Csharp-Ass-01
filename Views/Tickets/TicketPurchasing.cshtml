@@ -1,4 +1,4 @@
-@model List<Event>
+@model TicketPurchasingViewModel
 <link rel="stylesheet" href="/css/DarkMode.css">
 
 @{
@@ -7,9 +7,15 @@
 
 <h1>@ViewData["Title"]</h1>
 
+@if (!string.IsNullOrEmpty(Model.AlertMessage))
+{
+    var alertClass = Model.IsError ? "alert-danger" : "alert-success";
+    <div class="alert @alertClass" role="alert">
+        @Model.AlertMessage
+    </div>
+}
 
-
-@if (Model.Any() )
+@if (Model.Events.Any() )
 {
     <table class="table" id="dark-mode">
         <thead>
@@ -23,23 +29,18 @@
         </tr>
         </thead>
         <tbody>
-        @foreach (var anEvent in Model)
+        @foreach (var anEvent in Model.Events)
         {
-            var availableTickets = anEvent.AvailableTickets switch
-            {
-                0 => "SOLD OUT",
-                (< 200) => $"{anEvent.AvailableTickets} | ALMOST GONE!", // removing the "redundant parentheses" will cause the build to fail, so don't do that pls
-                _ => $"{anEvent.AvailableTickets}"
-            };
+            var availableTickets = TicketInventoryFormatter.FormatAvailability(anEvent.AvailableTickets);
             <tr>
                 <td>@anEvent.Id</td>
                 <td>@anEvent.Title</td>
                 <td>@anEvent.Category</td>
-                <td>@anEvent.EventDate</td>
+                <td>@anEvent.EventDate.ToString("yyyy-MM-dd")</td>
                 <td>$@anEvent.PricePerTicket</td>
                 <td>@availableTickets</td>
                 
-                @if(availableTickets == "SOLD OUT")
+                @if(TicketInventoryFormatter.IsSoldOut(anEvent.AvailableTickets))
                 {
                     <td>
                         <button class="btn btn-secondary" disabled>Sold Out</button>
@@ -48,7 +49,7 @@
                 else
                 {
                     <td>
-                        <a asp-action="purchaseConfirm" asp-route-id="@anEvent.Id" class="btn btn-danger">purchase</a>
+                        <a asp-action="PurchaseConfirm" asp-route-id="@anEvent.Id" class="btn btn-danger">Purchase</a>
                     </td>
                 }
             </tr>

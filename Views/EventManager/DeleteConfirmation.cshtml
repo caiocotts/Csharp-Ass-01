@@ -1,13 +1,12 @@
-﻿@model Event;
+﻿@model Event
 <link rel="stylesheet" href="/css/DarkMode.css">
 
 @{
-    ViewBag.Title = "Delete Project";
-    Layout = "_Layout";
+    ViewData["Title"] = "Delete Event";
 }
 
-<h2>@ViewBag.Title</h2>
-<h3>Are you sure you want to delete this project?</h3>
+<h2>@ViewData["Title"]</h2>
+<h3>Are you sure you want to delete this event?</h3>
 <div>
     <hr/>
     <dl class="row">
