@@ -35,6 +35,7 @@
       <_ContentIncludedByDefault Remove="Views\EventsManager\EventBrowser.cshtml" />
       <_ContentIncludedByDefault Remove="Views\EventsManager\ManageEvents.cshtml" />
       <_ContentIncludedByDefault Remove="Views\EventVisitor\EventBrowser.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\old-login\old-Login.cshtml" />
     </ItemGroup>
 
     <ItemGroup>
