@@ -4,17 +4,12 @@ public static class TicketInventoryFormatter
 {
     public static string FormatAvailability(int availableTickets)
     {
-        if (availableTickets <= 0)
+        return availableTickets switch
         {
-            return "SOLD OUT";
-        }
-
-        if (availableTickets < 200)
-        {
-            return $"{availableTickets} | ALMOST GONE!";
-        }
-
-        return availableTickets.ToString();
+            <= 0 => "SOLD OUT",
+            < 200 => $"{availableTickets} | ALMOST GONE!",
+            _ => availableTickets.ToString()
+        };
     }
 
     public static bool IsSoldOut(int availableTickets) => availableTickets <= 0;

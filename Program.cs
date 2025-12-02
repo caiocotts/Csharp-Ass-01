@@ -3,8 +3,12 @@ using Assignment01.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
-public class Program {
-    public static async Task Main(string[] args) {
+namespace Assignment01;
+
+public static class Program
+{
+    public static async Task Main(string[] args)
+    {
         var builder = WebApplication.CreateBuilder(args);
 
         // Add services to the container.
@@ -20,22 +24,22 @@ public class Program {
             .AddEntityFrameworkStores<AppDbContext>();
 
 
-
         var app = builder.Build();
-
-        // ==== ADD SEEDING LOGIC HERE ====
-        using (var scope = app.Services.CreateScope()) {
+        
+        using (var scope = app.Services.CreateScope())
+        {
             var services = scope.ServiceProvider;
             var userManager = services.GetRequiredService<UserManager<User>>();
             var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
 
             string[] roleNames = { "Admin", "Organizer", "Attendee" };
-            foreach (var roleName in roleNames) {
+            foreach (var roleName in roleNames)
+            {
                 if (!await roleManager.RoleExistsAsync(roleName))
                     await roleManager.CreateAsync(new IdentityRole(roleName));
             }
 
-            
+
             //SEEDING USERS
             var usersToSeed = new List<(string Email, string Name, string Role)>
             {
@@ -47,33 +51,28 @@ public class Program {
             foreach (var (email, name, role) in usersToSeed)
             {
                 var user = await userManager.FindByEmailAsync(email);
-                if (user == null)
-                {
-                    user = new User { UserName = email, Email = email, FullName = name, EmailConfirmed = true };
-                    var result = await userManager.CreateAsync(user, "SecurePassword123!");
-                    if (!result.Succeeded) throw new Exception(string.Join(", ", result.Errors.Select(e => e.Description)));
-                    await userManager.AddToRoleAsync(user, role);
-                }
+                if (user != null) continue;
+                user = new User { UserName = email, Email = email, FullName = name, EmailConfirmed = true };
+                var result = await userManager.CreateAsync(user, "SecurePassword123!");
+                if (!result.Succeeded) throw new Exception(string.Join(", ", result.Errors.Select(e => e.Description)));
+                await userManager.AddToRoleAsync(user, role);
             }
-
-            
-            
         }
         // =============================================
 
         // Configure the HTTP request pipeline.
-        if (!app.Environment.IsDevelopment()) {
+        if (!app.Environment.IsDevelopment())
+        {
             app.UseExceptionHandler("/Home/Error");
             // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
             app.UseHsts();
         }
 
 
-
         app.UseHttpsRedirection();
         app.UseRouting();
 
-// for the razor pages
+        // for the razor pages
         app.UseAuthentication(); // <-- REQUIRED BEFORE Authorization
 
         app.UseAuthorization();
