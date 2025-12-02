@@ -1,8 +1,9 @@
 ﻿@model ManageEventsViewModel
 
 @section Styles{
-    <link rel="stylesheet" href="@Url.Content("~/css/ManageEvents.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/css/ManageEvents.css")"/>
 }
+
 @{
     ViewData["Title"] = "Personal Event Management";
     var filters = Model.Filters;
@@ -28,7 +29,7 @@
                     <option value="">All Categories</option>
                     @foreach (var category in Model.CategoryOptions)
                     {
-                        var isSelected = string.Equals(category, categoryFilter, System.StringComparison.OrdinalIgnoreCase);
+                        var isSelected = string.Equals(category, categoryFilter, StringComparison.OrdinalIgnoreCase);
                         if (isSelected)
                         {
                             <option value="@category" selected>@category</option>
@@ -39,13 +40,12 @@
                         }
                     }
                 </select>
-                <select
-                    class="form-select"
-                    name="AvailabilityFilter"
-                    style="width: auto; display: inline-block; margin-right: 10px;">
+                <select class="form-select"
+                        name="AvailabilityFilter"
+                        style="width: auto; display: inline-block; margin-right: 10px;">
                     @foreach (var availability in Model.AvailabilityOptions)
                     {
-                        var isSelected = string.Equals(availabilityFilter, availability, System.StringComparison.OrdinalIgnoreCase);
+                        var isSelected = string.Equals(availabilityFilter, availability, StringComparison.OrdinalIgnoreCase);
                         if (isSelected)
                         {
                             <option value="@availability" selected>@availability</option>
@@ -60,12 +60,12 @@
                     <input type="text" name="searchString" value="@searchString" placeholder="Search by title"/>
                 </label>
                 <label style="margin-right: 5px;">From:
-                    <input type="date" name="startDate" value="@startDate" />
+                    <input type="date" name="startDate" value="@startDate"/>
                 </label>
                 <label style="margin-right: 10px;">To:
-                    <input type="date" name="endDate" value="@endDate" />
+                    <input type="date" name="endDate" value="@endDate"/>
                 </label>
-                <input type="submit" value="Search" class="btn btn-info"/>
+                @* <input type="submit" value="Search" class="btn btn-info"/> *@
                 <a asp-action="ManageEvents" class="btn btn-secondary" style="margin-left:10px;">Reset</a>
             </p>
             <input type="hidden" name="sortOrder" value="@sortOrder"/>
@@ -141,3 +141,8 @@
         }
     </div>
 </div>
+
+@section Scripts
+{
+    <script src="~/js/searchAndFilter.js"></script>
+}
