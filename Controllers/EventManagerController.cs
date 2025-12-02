@@ -17,6 +17,26 @@ public class EventManagerController(AppDbContext context, UserManager<User> user
 
     
     [HttpGet]
+    public async Task<IActionResult> GetFilteredEvents([FromQuery] EventFilterOptions? filterOptions)
+    {
+        var filters = (filterOptions ?? new EventFilterOptions()).Normalize();
+
+        var eventsQuery = context.Events.AsNoTracking().AsQueryable();
+        eventsQuery = eventsQuery.ApplyFilters(filters).ApplySorting(filters.SortOrder);
+
+        var events = await eventsQuery.Select(e => new {
+            e.Id,
+            e.Title,
+            e.Category,
+            EventDate = e.EventDate.ToString("yyyy-MM-dd"),
+            e.PricePerTicket,
+            e.AvailableTickets
+        }).ToListAsync();
+
+        return Json(events);
+    }
+    
+    [HttpGet]
     public async Task<IActionResult> ManageEvents([FromQuery] EventFilterOptions? filterOptions)
     {
         var filters = (filterOptions ?? new EventFilterOptions()).Normalize();
