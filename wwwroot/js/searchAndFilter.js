@@ -1,17 +1,16 @@
 $(document).ready(function () {
     let debounceTimer;
 
-    
     $('input[name="searchString"]').on('input', function () {
         clearTimeout(debounceTimer);
         debounceTimer = setTimeout(fetchFilteredEvents, 300); // debounce of 300ms for search input
     });
-    
+
     $('select[name="CategoryFilter"], select[name="AvailabilityFilter"], input[name="startDate"], input[name="endDate"]').on('change', function () {
         fetchFilteredEvents();
     });
 
-    function fetchFilteredEvents() {
+    const fetchFilteredEvents = () => {
         const formData = $('form').serialize();
 
         $.ajax({
@@ -28,7 +27,7 @@ $(document).ready(function () {
         });
     }
 
-    function updateTable(events) {
+    const updateTable = (events) => {
         const $tbody = $('table.table tbody');
         if ($tbody.length === 0) return;
 
@@ -56,13 +55,13 @@ $(document).ready(function () {
         $tbody.html(rows);
     }
 
-    function formatAvailability(tickets) {
-        if (tickets <= 0) return '<span class="text-danger">Sold Out</span>';
-        if (tickets <= 10) return '<span class="text-warning">' + tickets + '</span>';
+    const formatAvailability = (tickets) => {
+        if (tickets <= 0) return '<span class="text-danger">SOLD OUT</span>';
+        if (tickets < 200) return '<span class="text-warning">' + tickets + ' | ALMOST GONE!</span>';
         return tickets.toString();
     }
 
-    function escapeHtml(text) {
+    const escapeHtml = (text) => {
         if (!text) return '';
         return $('<div>').text(text).html(); // escaping magic
     }
