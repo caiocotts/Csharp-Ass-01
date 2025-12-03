@@ -2,12 +2,13 @@ using Assignment01.Data;
 using Assignment01.Models;
 using Assignment01.ViewModels;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace Assignment01.Controllers;
 
-public class TicketsController(AppDbContext context) : Controller
+public class TicketsController(AppDbContext context, UserManager<User> userManager) : Controller
 {
     public IActionResult TicketPurchasing()
     {
@@ -45,12 +46,13 @@ public class TicketsController(AppDbContext context) : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public IActionResult AddPurchase(int eventId, int quantity)
-    {
-        if (!TryGetUserId(out var userId))
-        {
+    public IActionResult AddPurchase(int eventId, int quantity) {
+        
+        if (User.Identity.IsAuthenticated) {
             return RedirectToAction("Login", "Login");
         }
+
+        var userId = userManager.GetUserId(User);
 
         if (quantity <= 0)
         {
