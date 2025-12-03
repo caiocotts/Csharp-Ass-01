@@ -19,7 +19,7 @@ public class Purchase
     public int Quantity { get; set; }
 
     [Required]
-    public int UserId { get; set; }
+    public string UserId { get; set; }
 
     [Required]
     public int EventId { get; set; }

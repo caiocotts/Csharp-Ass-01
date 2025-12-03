@@ -48,11 +48,8 @@ public class TicketsController(AppDbContext context, UserManager<User> userManag
     [ValidateAntiForgeryToken]
     public IActionResult AddPurchase(int eventId, int quantity) {
         
-        if (User.Identity.IsAuthenticated) {
-            return RedirectToAction("Login", "Login");
-        }
-
         var userId = userManager.GetUserId(User);
+        if (userId == null) return Unauthorized();
 
         if (quantity <= 0)
         {
