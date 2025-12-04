@@ -143,7 +143,7 @@
     <script>
         // TODO Move to separate JS file
         $(document).ready(() => {
-            const showModal = @( ? "true" :);
+            const showModal = @(showSuccessModal ? "true" : "false");
 
             if (showModal) {
                 $('#particles-js').show();
