@@ -10,12 +10,29 @@
 @if (!string.IsNullOrEmpty(Model.AlertMessage))
 {
     var alertClass = Model.IsError ? "alert-danger" : "alert-success";
-    <div class="alert @alertClass" role="alert">
+    <div class="alert @alertClass alert-dismissible fade show" role="alert">
         @Model.AlertMessage
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
 }
 
-@if (Model.Events.Any() )
+@if (TempData["CartError"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        @TempData["CartError"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+@if (TempData["CartSuccess"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["CartSuccess"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+@if (Model.Events.Any())
 {
     <table class="table" id="dark-mode">
         <thead>
@@ -26,6 +43,8 @@
             <th>Event Date</th>
             <th>Price per Ticket</th>
             <th>Available Tickets</th>
+            <th>Qty</th>
+            <th>Action</th>
         </tr>
         </thead>
         <tbody>
@@ -39,17 +58,25 @@
                 <td>@anEvent.EventDate.ToString("yyyy-MM-dd")</td>
                 <td>$@anEvent.PricePerTicket</td>
                 <td>@availableTickets</td>
-                
-                @if(TicketInventoryFormatter.IsSoldOut(anEvent.AvailableTickets))
+
+                @if (TicketInventoryFormatter.IsSoldOut(anEvent.AvailableTickets))
                 {
+                    <td>-</td>
                     <td>
-                        <button class="btn btn-secondary" disabled>Sold Out</button>
+                        <button class="btn btn-secondary btn-sm" disabled>Sold Out</button>
                     </td>
                 }
                 else
                 {
-                    <td>
-                        <a asp-action="PurchaseConfirm" asp-route-id="@anEvent.Id" class="btn btn-danger">Purchase</a>
+                    <td colspan="2">
+                        <form asp-controller="Cart" asp-action="AddToCart" method="post"
+                              class="d-flex align-items-center gap-2">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="eventId" value="@anEvent.Id"/>
+                            <input type="number" name="quantity" value="1" min="1" max="@anEvent.AvailableTickets"
+                                   class="form-control form-control-sm" style="width: 70px;"/>
+                            <button type="submit" class="btn btn-primary btn-sm">Add to Cart</button>
+                        </form>
                     </td>
                 }
             </tr>

@@ -1,5 +1,6 @@
 using Assignment01.Data;
 using Assignment01.Models;
+using Assignment01.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,6 +17,17 @@ public static class Program
 
         builder.Services.AddRazorPages(); // <-- REQUIRED FOR IDENTITY PAGES
 
+        // Session for shopping cart
+        builder.Services.AddDistributedMemoryCache();
+        builder.Services.AddSession(options =>
+        {
+            options.IdleTimeout = TimeSpan.FromMinutes(30);
+            options.Cookie.HttpOnly = true;
+            options.Cookie.IsEssential = true;
+        });
+        builder.Services.AddHttpContextAccessor();
+        builder.Services.AddScoped<ICartService, SessionCartService>();
+
         builder.Services.AddDbContext<AppDbContext>(options =>
             options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
@@ -25,7 +37,7 @@ public static class Program
 
 
         var app = builder.Build();
-        
+
         using (var scope = app.Services.CreateScope())
         {
             var services = scope.ServiceProvider;
@@ -71,6 +83,8 @@ public static class Program
 
         app.UseHttpsRedirection();
         app.UseRouting();
+
+        app.UseSession(); // <-- REQUIRED FOR SHOPPING CART
 
         // for the razor pages
         app.UseAuthentication(); // <-- REQUIRED BEFORE Authorization
