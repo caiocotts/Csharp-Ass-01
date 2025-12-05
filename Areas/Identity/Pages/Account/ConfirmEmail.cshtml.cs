@@ -18,10 +18,12 @@ namespace Assignment01.Areas.Identity.Pages.Account
     public class ConfirmEmailModel : PageModel
     {
         private readonly UserManager<User> _userManager;
+        private readonly ILogger<LoginModel> _logger;
 
-        public ConfirmEmailModel(UserManager<User> userManager)
+        public ConfirmEmailModel(UserManager<User> userManager, ILogger<LoginModel> logger)
         {
             _userManager = userManager;
+            _logger = logger;
         }
 
         /// <summary>
@@ -40,12 +42,27 @@ namespace Assignment01.Areas.Identity.Pages.Account
             var user = await _userManager.FindByIdAsync(userId);
             if (user == null)
             {
+                
                 return NotFound($"Unable to load user with ID '{userId}'.");
             }
 
             code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code));
             var result = await _userManager.ConfirmEmailAsync(user, code);
-            StatusMessage = result.Succeeded ? "Thank you for confirming your email." : "Error confirming your email.";
+
+            // CHECK IF IT SUCCEEDED
+            
+            if (result.Succeeded)
+            {
+                StatusMessage = "Thank you for confirming your email.";
+                _logger.LogInformation("User {UserId} successfully confirmed email.", userId);
+            }
+            else
+            {
+                StatusMessage = "Error confirming your email.";
+                
+                _logger.LogWarning("Failed email confirmation for User {UserId}. Errors: {Errors}", 
+                    userId, string.Join(", ", result.Errors.Select(e => e.Description)));
+            }
             return Page();
         }
     }
