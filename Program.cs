@@ -53,6 +53,9 @@ public static class Program
             .AddRoles<IdentityRole>()
             .AddEntityFrameworkStores<AppDbContext>();
 
+ 
+
+        builder.Services.AddControllersWithViews();
 
         var app = builder.Build();
 
