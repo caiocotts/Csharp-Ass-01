@@ -17,17 +17,32 @@ namespace Assignment01.Areas.Identity.Pages.Account
     {
         private readonly SignInManager<User> _signInManager;
         private readonly ILogger<LogoutModel> _logger;
+        private readonly UserManager<User> _userManager;
 
-        public LogoutModel(SignInManager<User> signInManager, ILogger<LogoutModel> logger)
+        public LogoutModel(SignInManager<User> signInManager, ILogger<LogoutModel> logger,  UserManager<User> userManager)
         {
             _signInManager = signInManager;
             _logger = logger;
+            _userManager  = userManager;
         }
 
         public async Task<IActionResult> OnPost(string returnUrl = null)
         {
+            
+            var user = await _userManager.GetUserAsync(User);
+            
+            if (user != null) {
+                // FIX 2: Changed message to "logged OUT"
+                _logger.LogInformation("User logged OUT: {FullName} ({Email}) ", 
+                    user.FullName, user.Email, DateTime.UtcNow);
+            }
+            else {
+                // Fallback if user object is missing
+                _logger.LogInformation("User logged OUT: {Name} at ", User.Identity?.Name);
+            }
+            
             await _signInManager.SignOutAsync();
-            _logger.LogInformation("User logged out.");
+            
             if (returnUrl != null)
             {
                 return LocalRedirect(returnUrl);
