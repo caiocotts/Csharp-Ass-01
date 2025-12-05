@@ -1,7 +1,9 @@
+using Assignment_1.Services;
 using Assignment01.Data;
 using Assignment01.Models;
 using Assignment01.Services;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace Assignment01;
@@ -16,6 +18,8 @@ public static class Program
         builder.Services.AddControllersWithViews();
 
         builder.Services.AddRazorPages(); // <-- REQUIRED FOR IDENTITY PAGES
+
+        builder.Services.AddTransient<IEmailSender, EmailSender>();
 
         // Session for shopping cart
         builder.Services.AddDistributedMemoryCache();
@@ -80,7 +84,7 @@ public static class Program
             app.UseHsts();
         }
 
-
+        
         app.UseHttpsRedirection();
         app.UseRouting();
 
