@@ -1,13 +1,13 @@
-﻿
-<!DOCTYPE html>
+﻿@{
+    ViewData["Title"] = "Server Error";
+}
 
-<html>
-<head>
-    <title>server error</title>
-</head>
-
-<body>
-    <h1>The server is being silly please come back in 15 minutes.</h1>
-</body>
-
-</html>
+<div class="error-page">
+    <i class="fa-solid fa-server fa-4x text-danger mb-4"></i>
+    <h1>500</h1>
+    <h3>Internal Server Error</h3>
+    <p>The server is experiencing difficulties. Please try again in a few minutes.</p>
+    <a asp-controller="Home" asp-action="Index" class="btn btn-primary mt-3">
+        <i class="fa-solid fa-home me-2"></i>Go to Home
+    </a>
+</div>

@@ -46,18 +46,18 @@
 
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Tickets"
-                               asp-action="TicketPurchasing">Ticket Purchasing</a>
+                                asp-action="TicketPurchasing">Ticket Purchasing</a>
                         </li>
-                        
-                       
+
+
 
                         @if (User.Identity!.IsAuthenticated)
                         {
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="dashboard"
-                                   asp-action="Dashboard">Dashboard</a>
+                                    asp-action="Dashboard">Dashboard</a>
                             </li>
-                            
+
                             <li class="nav-item">
                                 <span class="nav-link text-dark">
                                     @if (User.IsInRole("Admin"))
@@ -110,7 +110,7 @@
             </div>
         </nav>
     </header>
-    <div class="container">
+    <div class="@(ViewData["IsHomePage"] != null ? "" : "content-wrapper")">
         <main role="main" class="pb-0 mb-0">
             @RenderBody()
         </main>
@@ -126,17 +126,10 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/cart.js" asp-append-version="true"></script>
     <script>
-        // Update cart badge on page load
-        $(document).ready(function () {
-            $.get('@Url.Action("GetCartCount", "Cart")', function (data) {
-                var badge = $('#cart-badge');
-                if (data.count > 0) {
-                    badge.text(data.count).show();
-                } else {
-                    badge.hide();
-                }
-            });
+        $(document).ready(function() {
+            updateCartBadge('@Url.Action("GetCartCount", "Cart")');
         });
     </script>
     @await RenderSectionAsync("Scripts", required: false)

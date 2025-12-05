@@ -1,7 +1,10 @@
 @model Assignment01.Models.Event
-<link rel="stylesheet" href="/css/DarkMode.css">
 
-<h2>Edit Event</h2>
+@{
+    ViewData["Title"] = "Edit Event";
+}
+
+<h2 class="page-title">Edit Event</h2>
 
 <form asp-action="Edit" method="post">
     <input type="hidden" asp-for="Id" />

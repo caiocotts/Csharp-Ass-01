@@ -1,19 +1,18 @@
 @using System.Globalization
 @model PurchaseConfirmationViewModel
-<link rel="stylesheet" href="/css/DarkMode.css">
 
 @{
     ViewData["Title"] = "Purchase Tickets";
 }
 
-<h2>@ViewData["Title"]</h2>
+<h2 class="page-title">@ViewData["Title"]</h2>
 <div>
-    <hr/>
+    <hr />
     @if (TempData["TicketAlert"] is string alertMessage)
     {
         var alertClass = string.Equals(TempData["TicketAlertType"] as string, "error", StringComparison.OrdinalIgnoreCase)
-            ? "alert-danger"
-            : "alert-success";
+        ? "alert-danger"
+        : "alert-success";
         <div class="alert @alertClass" role="alert">@alertMessage</div>
     }
     <dl class="row">
@@ -45,14 +44,8 @@
                 <label class="form-label" for="quantity">Quantity (max @Model.AvailableTickets)</label>
                 <div class="input-group quantity-controls">
                     <button type="button" class="btn btn-outline-secondary" data-adjust="-1">-</button>
-                    <input type="number"
-                           id="quantity"
-                           name="quantity"
-                           class="form-control text-center"
-                           value="@Model.DefaultQuantity"
-                           min="1"
-                           max="@Model.AvailableTickets"
-                           readonly />
+                    <input type="number" id="quantity" name="quantity" class="form-control text-center"
+                        value="@Model.DefaultQuantity" min="1" max="@Model.AvailableTickets" readonly />
                     <button type="button" class="btn btn-outline-secondary" data-adjust="1">+</button>
                 </div>
             </div>
@@ -64,56 +57,12 @@
         </form>
     }
 </div>
-<style>
-    .input-group.quantity-controls .btn {
-        width: 50px !important;  /* force button width */
-        height: 40px !important; /* optional */
-        flex: 0 0 auto;          /* prevent Bootstrap from resizing */
-    }
-
-    .input-group.quantity-controls input {
-        width: 80px !important;  /* force input width */
-        text-align: center;
-        flex: 0 0 auto;          /* prevent Bootstrap from resizing */
-    }
-
- 
-    
-</style>
 
 @section Scripts {
+    <script src="~/js/purchase-confirm.js" asp-append-version="true"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const quantityInput = document.getElementById('quantity');
-            if (!quantityInput) {
-                return;
-            }
-
-            const priceDisplay = document.getElementById('price');
-            const pricePerTicket = @Model.PricePerTicket.ToString("F2", CultureInfo.InvariantCulture);
-
-            const updatePrice = () => {
-                const quantity = parseInt(quantityInput.value, 10);
-                const total = (quantity * pricePerTicket).toFixed(2);
-                priceDisplay.textContent = `Total Price: $${total}`;
-            };
-
-            document.querySelectorAll('[data-adjust]').forEach(button => {
-                button.addEventListener('click', () => {
-                    const delta = parseInt(button.getAttribute('data-adjust'), 10);
-                    const min = parseInt(quantityInput.min, 10);
-                    const max = parseInt(quantityInput.max, 10);
-                    const nextValue = parseInt(quantityInput.value, 10) + delta;
-
-                    if (nextValue >= min && nextValue <= max) {
-                        quantityInput.value = nextValue;
-                        updatePrice();
-                    }
-                });
-            });
-
-            updatePrice();
+        document.addEventListener('DOMContentLoaded', function() {
+            initQuantityControls(@Model.PricePerTicket.ToString("F2", CultureInfo.InvariantCulture));
         });
     </script>
 }
-

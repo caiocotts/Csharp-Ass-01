@@ -1,14 +1,13 @@
-﻿
+﻿@{
+    ViewData["Title"] = "Page Not Found";
+}
 
-<!DOCTYPE html>
-
-<html>
-<head>
-    <title>no page</title>
-</head>
-<body>
-    <h1>This page is not visable to our servers right, sorry for the technical difficulty.</h1>
-
-</body>
-
-</html>
+<div class="error-page">
+    <i class="fa-solid fa-file-circle-question fa-4x text-warning mb-4"></i>
+    <h1>404</h1>
+    <h3>Page Not Found</h3>
+    <p>The page you're looking for doesn't exist or has been moved.</p>
+    <a asp-controller="Home" asp-action="Index" class="btn btn-primary mt-3">
+        <i class="fa-solid fa-home me-2"></i>Go to Home
+    </a>
+</div>

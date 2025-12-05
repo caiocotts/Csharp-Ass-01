@@ -1,11 +1,11 @@
 ﻿@model ManageEventsViewModel
 
-@section Styles{
-    <link rel="stylesheet" href="@Url.Content("~/css/ManageEvents.css")"/>
+@section Styles {
+    <link rel="stylesheet" href="@Url.Content("~/css/ManageEvents.css")" />
 }
 
 @{
-    ViewData["Title"] = "Personal Event Management";
+    ViewData["Title"] = "Manage Events";
     var filters = Model.Filters;
     var sortOrder = filters.SortOrder ?? string.Empty;
     var categoryFilter = filters.CategoryFilter ?? string.Empty;
@@ -15,132 +15,119 @@
     var endDate = filters.EndDateInput;
 }
 
-<div class="manage-events-container">
-    <h2>Manage Events</h2>
-    <div class="event-container">
+<h2 class="page-title">Manage Events</h2>
 
-        <br/>
-
-        <form asp-controller="EventManager" asp-action="ManageEvents" method="get">
-            <p>
-                <select class="form-select"
-                        name="CategoryFilter"
-                        style="width: auto; display: inline-block; margin-right: 10px;">
-                    <option value="">All Categories</option>
-                    @foreach (var category in Model.CategoryOptions)
-                    {
-                        var isSelected = string.Equals(category, categoryFilter, StringComparison.OrdinalIgnoreCase);
-                        if (isSelected)
-                        {
-                            <option value="@category" selected>@category</option>
-                        }
-                        else
-                        {
-                            <option value="@category">@category</option>
-                        }
-                    }
-                </select>
-                <select class="form-select"
-                        name="AvailabilityFilter"
-                        style="width: auto; display: inline-block; margin-right: 10px;">
-                    @foreach (var availability in Model.AvailabilityOptions)
-                    {
-                        var isSelected = string.Equals(availabilityFilter, availability, StringComparison.OrdinalIgnoreCase);
-                        if (isSelected)
-                        {
-                            <option value="@availability" selected>@availability</option>
-                        }
-                        else
-                        {
-                            <option value="@availability">@availability</option>
-                        }
-                    }
-                </select>
-                <label style="margin-right: 10px;">
-                    <input type="text" name="searchString" value="@searchString" placeholder="Search by title"/>
-                </label>
-                <label style="margin-right: 5px;">From:
-                    <input type="date" name="startDate" value="@startDate"/>
-                </label>
-                <label style="margin-right: 10px;">To:
-                    <input type="date" name="endDate" value="@endDate"/>
-                </label>
-                @* <input type="submit" value="Search" class="btn btn-info"/> *@
-                <a asp-action="ManageEvents" class="btn btn-secondary" style="margin-left:10px;">Reset</a>
-            </p>
-            <input type="hidden" name="sortOrder" value="@sortOrder"/>
-        </form>
-        <br/>
-        <a asp-action="Create" class="btn btn-primary">Create New Event</a>
-        <br/><br/>
-
-        @{
-            var tableHeaders = new[]
+<div class="event-filters-section">
+    <form asp-controller="EventManager" asp-action="ManageEvents" method="get"
+        class="d-flex flex-wrap align-items-center gap-3">
+        <select class="form-select" name="CategoryFilter" style="width: auto;">
+            <option value="">All Categories</option>
+            @foreach (var category in Model.CategoryOptions)
             {
-                (Value: "ID", SortAsc: "", SortDesc: "id_desc"),
-                (Value: "Title", SortAsc: "title", SortDesc: "title_desc"),
-                (Value: "Category", SortAsc: "category", SortDesc: "category_desc"),
-                (Value: "Event Date", SortAsc: "date", SortDesc: "date_desc"),
-                (Value: "Price per Ticket", SortAsc: "price", SortDesc: "price_desc"),
-                (Value: "Available Tickets", SortAsc: "tickets", SortDesc: "tickets_desc")
-            };
-
-            if (Model.Events.Any())
-            {
-                <table class="table">
-                    <thead class="top-row">
-                    <tr>
-                        @foreach (var tableHeader in tableHeaders)
-                        {
-                            <th>
-                                <a class="sort-link"
-                                   asp-action="ManageEvents"
-                                   asp-route-sortOrder="@(sortOrder == tableHeader.SortAsc ? tableHeader.SortDesc : tableHeader.SortAsc)"
-                                   asp-route-searchString="@searchString"
-                                   asp-route-categoryFilter="@categoryFilter"
-                                   asp-route-availabilityFilter="@availabilityFilter"
-                                   asp-route-startDate="@startDate"
-                                   asp-route-endDate="@endDate">
-                                    @tableHeader.Value
-                                    <span class="sort-arrow">
-                                        @(SortArrow.Arrow(sortOrder, tableHeader.SortAsc, tableHeader.SortDesc))
-                                    </span>
-                                </a>
-                            </th>
-                        }
-                    </tr>
-                    </thead>
-                    <tbody class="main-table">
-                    @foreach (var anEvent in Model.Events)
-                    {
-                        var availabilityLabel = TicketInventoryFormatter.FormatAvailability(anEvent.AvailableTickets);
-                        <tr class="main-row">
-                            <td>@anEvent.Id</td>
-                            <td>@anEvent.Title</td>
-                            <td>@anEvent.Category</td>
-                            <td>@anEvent.EventDate.ToString("yyyy-MM-dd")</td>
-                            <td>$@anEvent.PricePerTicket</td>
-                            <td>@availabilityLabel</td>
-                            <td>
-                                <a asp-action="Edit" asp-route-id="@anEvent.Id" class="btn btn-sm btn-warning me-2">
-                                    Edit
-                                </a>
-                                <a asp-action="DeleteConfirmation" asp-route-id="@anEvent.Id" class="btn btn-danger">
-                                    Delete
-                                </a>
-                            </td>
-                        </tr>
-                    }
-                    </tbody>
-                </table>
+                var isSelected = string.Equals(category, categoryFilter, StringComparison.OrdinalIgnoreCase);
+                <option value="@category" selected="@isSelected">@category</option>
             }
-            else
+        </select>
+
+        <select class="form-select" name="AvailabilityFilter" style="width: auto;">
+            @foreach (var availability in Model.AvailabilityOptions)
             {
-                <p>No events available.</p>
+                var isSelected = string.Equals(availabilityFilter, availability, StringComparison.OrdinalIgnoreCase);
+                <option value="@availability" selected="@isSelected">@availability</option>
             }
-        }
-    </div>
+        </select>
+
+        <input type="text" name="searchString" value="@searchString" placeholder="Search by title" class="form-control"
+            style="width: 200px;" />
+
+        <div class="d-flex align-items-center gap-2">
+            <label class="mb-0">From:</label>
+            <input type="date" name="startDate" value="@startDate" class="form-control" style="width: auto;" />
+        </div>
+
+        <div class="d-flex align-items-center gap-2">
+            <label class="mb-0">To:</label>
+            <input type="date" name="endDate" value="@endDate" class="form-control" style="width: auto;" />
+        </div>
+
+        <a asp-action="ManageEvents" class="btn btn-secondary">Reset</a>
+        <input type="hidden" name="sortOrder" value="@sortOrder" />
+    </form>
 </div>
+
+<div class="mb-4">
+    <a asp-action="Create" class="btn btn-success btn-create-event">
+        <i class="fa-solid fa-plus me-2"></i>Create New Event
+    </a>
+</div>
+
+@{
+    var tableHeaders = new[]
+    {
+(Value: "ID", SortAsc: "", SortDesc: "id_desc"),
+(Value: "Title", SortAsc: "title", SortDesc: "title_desc"),
+(Value: "Category", SortAsc: "category", SortDesc: "category_desc"),
+(Value: "Event Date", SortAsc: "date", SortDesc: "date_desc"),
+(Value: "Price per Ticket", SortAsc: "price", SortDesc: "price_desc"),
+(Value: "Available Tickets", SortAsc: "tickets", SortDesc: "tickets_desc")
+};
+
+    if (Model.Events.Any())
+    {
+        <table class="table">
+            <thead class="top-row">
+                <tr>
+                    @foreach (var tableHeader in tableHeaders)
+                    {
+                        <th>
+                            <a class="sort-link" asp-action="ManageEvents"
+                                asp-route-sortOrder="@(sortOrder == tableHeader.SortAsc ? tableHeader.SortDesc : tableHeader.SortAsc)"
+                                asp-route-searchString="@searchString" asp-route-categoryFilter="@categoryFilter"
+                                asp-route-availabilityFilter="@availabilityFilter" asp-route-startDate="@startDate"
+                                asp-route-endDate="@endDate">
+                                @tableHeader.Value
+                                <span class="sort-arrow">
+                                    @(SortArrow.Arrow(sortOrder, tableHeader.SortAsc, tableHeader.SortDesc))
+                                </span>
+                            </a>
+                        </th>
+                    }
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody class="main-table">
+                @foreach (var anEvent in Model.Events)
+                {
+                    var availabilityLabel = TicketInventoryFormatter.FormatAvailability(anEvent.AvailableTickets);
+                    <tr class="main-row">
+                        <td>@anEvent.Id</td>
+                        <td>@anEvent.Title</td>
+                        <td>@anEvent.Category</td>
+                        <td>@anEvent.EventDate.ToString("yyyy-MM-dd")</td>
+                        <td>$@anEvent.PricePerTicket</td>
+                        <td>@availabilityLabel</td>
+                        <td>
+                            <a asp-action="Edit" asp-route-id="@anEvent.Id" class="btn btn-sm btn-warning">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </a>
+                            <a asp-action="DeleteConfirmation" asp-route-id="@anEvent.Id" class="btn btn-sm btn-danger">
+                                <i class="fa-solid fa-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <div class="empty-state">
+            <i class="fa-solid fa-calendar-xmark"></i>
+            <h4>No Events Found</h4>
+            <p>Create your first event to get started!</p>
+        </div>
+    }
+}
 
 @section Scripts
 {
