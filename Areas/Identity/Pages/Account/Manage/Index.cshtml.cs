@@ -26,6 +26,7 @@ namespace Assignment01.Areas.Identity.Pages.Account.Manage
             _signInManager = signInManager;
         }
 
+        
         /// <summary>
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
         ///     directly from your code. This API may change or be removed in future releases.
@@ -59,6 +60,10 @@ namespace Assignment01.Areas.Identity.Pages.Account.Manage
             [Phone]
             [Display(Name = "Phone number")]
             public string PhoneNumber { get; set; }
+            
+            
+            [Display(Name = "Full Name")]
+            public string FullName { get; set; } //for changing name
         }
 
         private async Task LoadAsync(User user)
@@ -70,7 +75,8 @@ namespace Assignment01.Areas.Identity.Pages.Account.Manage
 
             Input = new InputModel
             {
-                PhoneNumber = phoneNumber
+                PhoneNumber = phoneNumber,
+                FullName = user.FullName
             };
         }
 
@@ -109,6 +115,19 @@ namespace Assignment01.Areas.Identity.Pages.Account.Manage
                     StatusMessage = "Unexpected error when trying to set phone number.";
                     return RedirectToPage();
                 }
+            }
+            
+            if (Input.FullName != user.FullName)
+            {
+                user.FullName = Input.FullName;
+                var updateResult = await _userManager.UpdateAsync(user);
+        
+                if (!updateResult.Succeeded)
+                {
+                    StatusMessage = "Unexpected error when trying to set full name.";
+                    return RedirectToPage();
+                }
+                
             }
 
             await _signInManager.RefreshSignInAsync(user);
