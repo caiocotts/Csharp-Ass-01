@@ -161,8 +161,8 @@ namespace Assignment01.Areas.Identity.Pages.Account
             {
                 return Activator.CreateInstance<User>();
             }
-            catch
-            {
+            catch {
+                _logger.LogError("cannot create this user: " + nameof(User));
                 throw new InvalidOperationException($"Can't create an instance of '{nameof(User)}'. " +
                     $"Ensure that '{nameof(User)}' is not an abstract class and has a parameterless constructor, or alternatively " +
                     $"override the register page in /Areas/Identity/Pages/Account/Register.cshtml");
