@@ -42,6 +42,27 @@ public class DashboardController(AppDbContext context, UserManager<User> userMan
         
         return View();  
     }
+    public async Task<IActionResult> purchaseHistory() {
+    
+        var user = await userManager.GetUserAsync(User);
+        var userId = user.Id;
+
+        // Get all purchases for the current user
+        var purchases = context.Purchases.Where(p => p.UserId == userId).ToList();
+
+        // Create a list of TicketDataObject to store the results
+        var ticketDataList = new List<TicketDataObject>();
+
+        // Iterate through each purchase and create a TicketDataObject
+        foreach (var purchase in purchases)
+        {
+            var ticketData = getTicketDataFromPurchase(purchase.Id);
+            ticketDataList.Add(ticketData);
+        }
+
+        // Pass the populated list to the View
+        return View(ticketDataList);
+    }
     
     public async Task<IActionResult> myTickets() {
         
@@ -70,6 +91,23 @@ public class DashboardController(AppDbContext context, UserManager<User> userMan
 
     public IActionResult viewQR() {
         return View();
+    }
+    
+    [HttpPost]
+    public IActionResult SubmitRating(int purchaseId, int rating)
+    {
+        // Validate the input again on the server side
+        if (rating < 1 || rating > 5)
+        {
+            return BadRequest("Rating must be between 1 and 5");
+        }
+
+        var purchase = context.Purchases.FirstOrDefault(e => e.Id == purchaseId);
+        purchase.PurchaseRating = rating;
+        context.Update(purchase);
+        context.SaveChanges();
+        
+        return RedirectToAction("purchaseHistory");
     }
     
 }

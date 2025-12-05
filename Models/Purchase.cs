@@ -25,4 +25,6 @@ public class Purchase
     public int EventId { get; set; }
 
     public Event Event { get; set; } = null!;
+    
+    public int PurchaseRating { get; set; }
 }
