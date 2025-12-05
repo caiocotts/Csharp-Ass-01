@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using Assignment01.Data;
 using Assignment01.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication;
@@ -14,6 +15,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace Assignment01.Areas.Identity.Pages.Account
@@ -22,11 +24,13 @@ namespace Assignment01.Areas.Identity.Pages.Account
     {
         private readonly SignInManager<User> _signInManager;
         private readonly ILogger<LoginModel> _logger;
+        private readonly UserManager<User> _userManager;
 
-        public LoginModel(SignInManager<User> signInManager, ILogger<LoginModel> logger)
+        public LoginModel(SignInManager<User> signInManager, ILogger<LoginModel> logger, UserManager<User> userManager)
         {
             _signInManager = signInManager;
             _logger = logger;
+            _userManager  = userManager;
         }
 
         /// <summary>
@@ -115,9 +119,22 @@ namespace Assignment01.Areas.Identity.Pages.Account
                 var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
-                    _logger.LogInformation("User logged in.");
+                    var user = await _userManager.FindByEmailAsync(Input.Email);
+                    
+                    if (user != null) {
+                        // Log with Full Name and Email
+                        _logger.LogInformation("User logged in: {FullName} ({Email}) ", 
+                            user.FullName, Input.Email, DateTime.UtcNow);
+                    }
+                    else {
+                        //  if something weird happens
+                        _logger.LogInformation("User logged in: {Email}", Input.Email);
+                    }
+                    
                     return LocalRedirect(returnUrl);
                 }
+                
+                
                 if (result.RequiresTwoFactor)
                 {
                     return RedirectToPage("./LoginWith2fa", new { ReturnUrl = returnUrl, RememberMe = Input.RememberMe });
