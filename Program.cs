@@ -5,6 +5,7 @@ using Assignment01.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 namespace Assignment01;
 
@@ -13,7 +14,20 @@ public static class Program
     public static async Task Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
-
+        
+        //For Global Error Handling
+        Log.Logger = new LoggerConfiguration()
+            .MinimumLevel.Information()
+            .MinimumLevel.Override("Microsoft", Serilog.Events.LogEventLevel.Warning) // Silence Microsoft logs
+            .MinimumLevel.Override("Microsoft.EntityFrameworkCore", Serilog.Events.LogEventLevel.Warning) // Silence Database SQL logs
+            .MinimumLevel.Override("System", Serilog.Events.LogEventLevel.Warning) // Silence System logs
+            // Write to Console and File
+            .WriteTo.Console()
+            .WriteTo.File("logs/log-.txt", rollingInterval: RollingInterval.Day)
+            .CreateLogger();
+        builder.Host.UseSerilog();
+        
+        
         // Add services to the container.
         builder.Services.AddControllersWithViews();
 
@@ -74,18 +88,19 @@ public static class Program
                 await userManager.AddToRoleAsync(user, role);
             }
         }
-        // =============================================
-
+  
         // Configure the HTTP request pipeline.
         if (!app.Environment.IsDevelopment())
         {
-            app.UseExceptionHandler("/Home/Error");
-            // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+            app.UseExceptionHandler("/Error/500"); // points to ErrorController.ServerError() to handle all the 500\ pages errors
             app.UseHsts();
         }
 
-        
+
+        app.UseStatusCodePagesWithReExecute("/Error/{0}"); // for the 404 handling
+
         app.UseHttpsRedirection();
+        
         app.UseRouting();
 
         app.UseSession(); // <-- REQUIRED FOR SHOPPING CART
