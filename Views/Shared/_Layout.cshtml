@@ -46,7 +46,12 @@
 
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Tickets"
-                                asp-action="TicketPurchasing">Ticket Purchasing</a>
+                               asp-action="TicketPurchasing">Ticket Purchasing</a>
+                        </li>
+                        
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="dashboard"
+                               asp-action="dashboard">Dashboard</a>
                         </li>
 
                         @if (User.Identity!.IsAuthenticated)
