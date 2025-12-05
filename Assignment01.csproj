@@ -7,6 +7,13 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <Compile Remove="Assignment01.Tests\**" />
+      <Content Remove="Assignment01.Tests\**" />
+      <EmbeddedResource Remove="Assignment01.Tests\**" />
+      <None Remove="Assignment01.Tests\**" />
+    </ItemGroup>
+
+    <ItemGroup>
       <AdditionalFiles Include="Views\EventManager\Create.cshtml" />
       <AdditionalFiles Include="Views\Tickets\TicketPurchasing.cshtml" />
     </ItemGroup>
