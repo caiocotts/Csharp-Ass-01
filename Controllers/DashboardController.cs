@@ -1,10 +1,12 @@
 ﻿using Assignment01.Data;
 using Assignment01.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Assignment01.Controllers;
 
+[Authorize]
 public class DashboardController(AppDbContext context, UserManager<User> userManager) : Controller{
     
     public class TicketDataObject {
