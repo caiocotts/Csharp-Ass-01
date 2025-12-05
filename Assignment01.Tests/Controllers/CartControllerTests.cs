@@ -41,7 +41,7 @@ public class CartControllerTests
         context.Events.Add(soldOutEvent);
         context.SaveChanges();
 
-        _controller = new CartController(context, null!, _cartService);
+        _controller = new CartController(context, null!, null!, _cartService);
 
         // setup TempData
         _controller.TempData = new TempDataDictionary(
