@@ -1,0 +1,54 @@
+﻿@model List<Assignment01.Models.Purchase>
+@*
+    This view is rendered by MyTicketsController.MyTickets() to display the list of purchases 
+    and provide the download buttons.
+*@
+
+@{
+    ViewData["Title"] = "My Tickets";
+}
+
+<div class="container mx-auto p-4 sm:p-8">
+    <h1 class="text-3xl font-extrabold mb-6 text-gray-900 border-b pb-2">Your Purchased Tickets</h1>
+    
+    @if (Model == null || !Model.Any())
+    {
+        <div class="p-6 bg-yellow-50 border border-yellow-200 text-yellow-800 rounded-lg shadow-md">
+            <p class="font-semibold">No Tickets Found</p>
+            <p class="text-sm">You currently have no active ticket purchases on record.</p>
+        </div>
+    }
+    else
+    {
+        <div class="space-y-5">
+            @foreach (var purchase in Model)
+            {
+                <div class="p-5 border border-gray-200 rounded-xl shadow-lg bg-white flex flex-col md:flex-row items-start md:items-center justify-between transition-all hover:shadow-xl">
+                    <div class="flex-grow mb-4 md:mb-0">
+                        <!-- Display Event Information -->
+                        <h2 class="text-xl font-bold text-indigo-700">@purchase.Event.Title</h2>
+                        <div class="text-sm text-gray-600 mt-1">
+                            <span class="mr-3">Event Date: @purchase.Event.EventDate.ToString("MMM dd, yyyy")</span>
+                            <span class="mr-3">Purchased: @purchase.Date.ToShortDateString()</span>
+                        </div>
+                        <p class="mt-2 text-md font-medium">
+                            Tickets: **@purchase.Quantity** | 
+                            Total Paid: **@purchase.Cost.ToString("C")**
+                        </p>
+                    </div>
+
+                    <div class="flex-shrink-0">
+                        <!-- The Download Button calls the secure DownloadPdf action -->
+                        <a asp-controller="MyTickets" 
+                           asp-action="DownloadPdf" 
+                           asp-route-purchaseID="@purchase.Id" 
+                           class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-full shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-4 focus:ring-red-300 transition duration-150">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                            Download PDF Ticket
+                        </a>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

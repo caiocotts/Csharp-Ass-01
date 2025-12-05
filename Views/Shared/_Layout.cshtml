@@ -42,6 +42,8 @@
                     <li class="nav-item">
                         <a class="nav-link text-dark" asp-area="" asp-controller="Tickets" asp-action="TicketPurchasing">Ticket Purchasing</a>
                     </li>
+                    
+                    
 
                     @if (User.Identity.IsAuthenticated)
                     {
@@ -76,9 +78,28 @@
                         </li>
                     }
                     
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" asp-area="" asp-controller="Tickets" asp-action="MyTickets">My Tickets</a>
+                    </li>
+                    
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" asp-area="" asp-controller="Tickets" asp-action="TicketPurchasing">Purchase History</a>
+                    </li>
+                    
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" asp-area="" asp-controller="Tickets" asp-action="TicketPurchasing">My Events</a>
+                    </li>
+                    
                     @if (User.Identity.IsAuthenticated) {
                         <a class="nav-link" asp-area="Identity" asp-page="/Account/Manage/Index">Profile</a>
                     }
+                    
+                    @*@if (User.Identity.IsAuthenticated)
+                    {
+                        <a></a>
+                    }*@
+                    
+  
                     
                 </ul>
             </div>
