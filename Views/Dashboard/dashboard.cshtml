@@ -6,21 +6,31 @@
     <title>dashboard landing </title>
 </head>
 <body>
-    <ul>
-        <li class="nav-item">
-            <a class="nav-link text-dark" asp-area="" asp-controller="dashboard"
-               asp-action="PurchaseHistory">Purchase History</a>
-        </li>
+<ul>
+    <li class="nav-item">
+        <a class="nav-link text-dark" asp-area="" asp-controller="dashboard"
+           asp-action="PurchaseHistory">Purchase History</a>
+    </li>
 
-        <li class="nav-item">
-            <a class="nav-link text-dark" asp-area="" asp-controller="dashboard"
-               asp-action="myTickets">My Tickets</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link text-dark" asp-area="" asp-controller="dashboard"
-               asp-action="MyEvents">Events</a>
-        </li>
+    <li class="nav-item">
+        <a class="nav-link text-dark" asp-area="" asp-controller="dashboard"
+           asp-action="myTickets">My Tickets</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link text-dark" asp-area="" asp-controller="dashboard"
+           asp-action="MyEvents">Events</a>
+    </li>
         
-    </ul>
+</ul>
 </body>
 </html>
+
+<style>
+    li{
+        width: fit-content;
+        margin-top: 20px;
+    }
+    ul{
+        list-style-type: none;
+    }
+</style>
