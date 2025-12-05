@@ -4,11 +4,12 @@
     var showSuccessModal = TempData["PurchaseSuccess"] != null;
 }
 
-<!-- Particles.js container for confetti -->
+<!-- particles.js container for confetti -->
 <div id="particles-js"
-     style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1050; pointer-events: none; display: none;"></div>
+     style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1050; pointer-events: none; display: none;">
+</div>
 
-<!-- Success Modal -->
+<!-- modal -->
 <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true"
      data-bs-backdrop="static">
     <div class="modal-dialog modal-dialog-centered">
@@ -32,194 +33,116 @@
     </div>
 </div>
 
-<div class="container mt-4">
-    <h2>Shopping Cart</h2>
+<h2 class="page-title">Shopping Cart</h2>
 
-    @if (TempData["CartError"] != null)
-    {
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            @TempData["CartError"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    }
+@if (TempData["CartError"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        @TempData["CartError"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
 
-    @if (TempData["CartSuccess"] != null)
-    {
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            @TempData["CartSuccess"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    }
+@if (TempData["CartSuccess"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["CartSuccess"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
 
-    @if (Model.IsEmpty)
-    {
-        <div class="text-center py-5">
-            <h4 class="text-muted">Your cart is empty</h4>
-            <p class="text-muted">Browse our events and add tickets to your cart.</p>
-            <a asp-controller="Tickets" asp-action="TicketPurchasing" class="btn btn-primary mt-3">
-                Browse Events
-            </a>
-        </div>
-    }
-    else
-    {
-        <table class="table table-striped">
-            <thead>
+@if (Model.IsEmpty)
+{
+    <div class="empty-state">
+        <i class="fa-solid fa-cart-shopping"></i>
+        <h4>Your cart is empty</h4>
+        <p>Browse our events and add tickets to your cart.</p>
+        <a asp-controller="Tickets" asp-action="TicketPurchasing" class="btn btn-primary mt-3">
+            Browse Events
+        </a>
+    </div>
+}
+else
+{
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <th>Event</th>
+            <th>Category</th>
+            <th>Date</th>
+            <th>Price</th>
+            <th>Quantity</th>
+            <th>Subtotal</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var item in Model.CartItems)
+        {
             <tr>
-                <th>Event</th>
-                <th>Category</th>
-                <th>Date</th>
-                <th>Price</th>
-                <th>Quantity</th>
-                <th>Subtotal</th>
-                <th>Actions</th>
+                <td>@item.EventTitle</td>
+                <td>@item.Category</td>
+                <td>@item.EventDate.ToString("MMM dd, yyyy")</td>
+                <td>@item.PricePerTicket.ToString("C")</td>
+                <td>
+                    <form asp-controller="Cart" asp-action="UpdateQuantity" method="post" class="d-inline">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="eventId" value="@item.EventId"/>
+                        <input type="number" name="quantity" value="@item.Quantity" min="1" max="100"
+                               class="form-control form-control-sm d-inline" style="width: 70px;"
+                               onchange="this.form.submit()"/>
+                    </form>
+                </td>
+                <td>@item.Subtotal.ToString("C")</td>
+                <td>
+                    <form asp-controller="Cart" asp-action="RemoveFromCart" method="post" class="d-inline">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="eventId" value="@item.EventId"/>
+                        <button type="submit" class="btn btn-sm btn-outline-danger">Remove</button>
+                    </form>
+                </td>
             </tr>
-            </thead>
-            <tbody>
-            @foreach (var item in Model.CartItems)
-            {
-                <tr>
-                    <td>@item.EventTitle</td>
-                    <td>@item.Category</td>
-                    <td>@item.EventDate.ToString("MMM dd, yyyy")</td>
-                    <td>@item.PricePerTicket.ToString("C")</td>
-                    <td>
-                        <form asp-controller="Cart" asp-action="UpdateQuantity" method="post" class="d-inline">
-                            @Html.AntiForgeryToken()
-                            <input type="hidden" name="eventId" value="@item.EventId"/>
-                            <input type="number" name="quantity" value="@item.Quantity" min="1" max="100"
-                                   class="form-control form-control-sm d-inline" style="width: 70px;"
-                                   onchange="this.form.submit()"/>
-                        </form>
-                    </td>
-                    <td>@item.Subtotal.ToString("C")</td>
-                    <td>
-                        <form asp-controller="Cart" asp-action="RemoveFromCart" method="post" class="d-inline">
-                            @Html.AntiForgeryToken()
-                            <input type="hidden" name="eventId" value="@item.EventId"/>
-                            <button type="submit" class="btn btn-sm btn-outline-danger">Remove</button>
-                        </form>
-                    </td>
-                </tr>
-            }
-            </tbody>
-            <tfoot>
-            <tr>
-                <td colspan="5" class="text-end"><strong>Total:</strong></td>
-                <td><strong>@Model.Total.ToString("C")</strong></td>
-                <td></td>
-            </tr>
-            </tfoot>
-        </table>
+        }
+        </tbody>
+        <tfoot>
+        <tr>
+            <td colspan="5" class="text-end"><strong>Total:</strong></td>
+            <td><strong>@Model.Total.ToString("C")</strong></td>
+            <td></td>
+        </tr>
+        </tfoot>
+    </table>
 
-        <div class="d-flex justify-content-between mt-4">
-            <a asp-controller="Tickets" asp-action="TicketPurchasing" class="btn btn-outline-secondary">
-                Continue Shopping
+    <div class="d-flex justify-content-between mt-4">
+        <a asp-controller="Tickets" asp-action="TicketPurchasing" class="btn btn-outline-secondary">
+            Continue Shopping
+        </a>
+
+        @if (User.Identity?.IsAuthenticated == true)
+        {
+            <form asp-controller="Cart" asp-action="CompletePurchase" method="post">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="btn btn-success btn-lg">
+                    Complete Purchase
+                </button>
+            </form>
+        }
+        else
+        {
+            <a asp-area="Identity" asp-page="/Account/Login" asp-route-returnUrl="@Url.Action("Checkout", "Cart")"
+               class="btn btn-primary btn-lg">
+                Login to Complete Purchase
             </a>
+        }
+    </div>
+}
 
-            @if (User.Identity?.IsAuthenticated == true)
-            {
-                <form asp-controller="Cart" asp-action="CompletePurchase" method="post">
-                    @Html.AntiForgeryToken()
-                    <button type="submit" class="btn btn-success btn-lg">
-                        Complete Purchase
-                    </button>
-                </form>
-            }
-            else
-            {
-                <a asp-area="Identity" asp-page="/Account/Login"
-                   asp-route-returnUrl="@Url.Action("Checkout", "Cart")"
-                   class="btn btn-primary btn-lg">
-                    Login to Complete Purchase
-                </a>
-            }
-        </div>
-    }
-</div>
-
-@section Scripts { @* the code below generates particles in the checkout modal, don't mind how ugly it is *@
+@section Scripts {
     <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+    <script src="~/js/checkout.js" asp-append-version="true"></script>
     <script>
-        // TODO Move to separate JS file
-        $(document).ready(() => {
-            const showModal = @(showSuccessModal ? "true" : "false");
-
-            if (showModal) {
-                $('#particles-js').show();
-                particlesJS('particles-js', {
-                    "particles": {
-                        "number": {
-                            "value": 150,
-                            "density": {
-                                "enable": true,
-                                "value_area": 800
-                            }
-                        },
-                        "color": {
-                            "value": ["#ff0000", "#00ff00", "#0000ff", "#ffff00", "#ff00ff", "#00ffff", "#ffa500", "#ff1493"]
-                        },
-                        "shape": {
-                            "type": ["circle", "triangle", "polygon"],
-                            "polygon": {
-                                "nb_sides": 6
-                            }
-                        },
-                        "opacity": {
-                            "value": 0.9,
-                            "random": true,
-                            "anim": {
-                                "enable": true,
-                                "speed": 1,
-                                "opacity_min": 0.1,
-                                "sync": false
-                            }
-                        },
-                        "size": {
-                            "value": 8,
-                            "random": true,
-                            "anim": {
-                                "enable": false
-                            }
-                        },
-                        "line_linked": {
-                            "enable": false
-                        },
-                        "move": {
-                            "enable": true,
-                            "speed": 8,
-                            "direction": "bottom",
-                            "random": true,
-                            "straight": false,
-                            "out_mode": "out",
-                            "bounce": false,
-                            "attract": {
-                                "enable": false
-                            }
-                        }
-                    },
-                    "interactivity": {
-                        "detect_on": "canvas",
-                        "events": {
-                            "onhover": {
-                                "enable": false
-                            },
-                            "onclick": {
-                                "enable": false
-                            },
-                            "resize": true
-                        }
-                    },
-                    "retina_detect": true
-                });
-
-                const successModal = new bootstrap.Modal(document.getElementById('successModal'));
-                successModal.show();
-
-                setTimeout(function () {
-                    $('#particles-js').fadeOut(1000);
-                }, 5000);
-            }
+        $(document).ready(function () {
+            initCheckoutSuccess(@(showSuccessModal ? "true" : "false"));
         });
     </script>
 }
