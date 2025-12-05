@@ -1,0 +1,68 @@
+﻿@* @model ManageEventsViewModel *@
+@using Assignment01.Controllers
+@model List<DashboardController.eRev>
+
+@section Styles{
+    <link rel="stylesheet" href="@Url.Content("~/css/ManageEvents.css")"/>
+}
+
+@{
+    ViewData["Title"] = "My Events";
+}
+
+<div class="manage-events-container">
+    <h2>My Events</h2>
+    <div class="event-container">
+
+
+        @{
+            string[] tableHeaders =
+            [
+                "ID",
+                "Title",
+                "Category",
+                "Event Date",
+                "Price per Ticket",
+                "Available Tickets",
+                "Revenue"
+            ];
+
+            if (Model.Any())
+            {
+                <table class="table">
+                    <thead class="top-row">
+                    <tr>
+                        @foreach (var tableHeader in tableHeaders)
+                        {
+                            <th>
+                                <a class="sort-link">
+                                    @tableHeader
+                                </a>
+                            </th>
+                        }
+                    </tr>
+                    </thead>
+                    <tbody class="main-table">
+                    @foreach (var anEvent in Model)
+                    {
+                        var availabilityLabel = TicketInventoryFormatter.FormatAvailability(anEvent.AvailableTickets);
+                        <tr class="main-row">
+                            <td>@anEvent.Id</td>
+                            <td>@anEvent.Title</td>
+                            <td>@anEvent.Category</td>
+                            <td>@anEvent.EventDate.ToString("yyyy-MM-dd")</td>
+                            <td>$@anEvent.PricePerTicket</td>
+                            <td>@availabilityLabel</td>
+                            <td>$@anEvent.revenue</td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <p>No events available.</p>
+            }
+        }
+    </div>
+</div>

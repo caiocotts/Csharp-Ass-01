@@ -8,6 +8,7 @@ public class ManageEventsViewModel
     private static readonly string[] DefaultAvailabilityOptions = ["Any Availability", "Available", "Sold Out"];
 
     public IReadOnlyList<Event> Events { get; init; } = Array.Empty<Event>();
+    
     public EventFilterOptions Filters { get; init; } = new();
     public IReadOnlyList<string> CategoryOptions { get; init; } = DefaultCategoryOptions;
     public IReadOnlyList<string> AvailabilityOptions { get; init; } = DefaultAvailabilityOptions;
