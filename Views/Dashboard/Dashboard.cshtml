@@ -27,14 +27,17 @@
                 My Tickets
             </button>
         </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link" id="my-events-tab" data-bs-toggle="tab"
-                    data-bs-target="#my-events" type="button" role="tab"
-                    aria-controls="my-events" aria-selected="false"
-                    data-url="@Url.Action("GetMyEventsPartial", "Dashboard")">
-                My Events
-            </button>
-        </li>
+        
+        @if(User.IsInRole("Admin") || User.IsInRole("Organizer")){
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="my-events-tab" data-bs-toggle="tab"
+                        data-bs-target="#my-events" type="button" role="tab"
+                        aria-controls="my-events" aria-selected="false"
+                        data-url="@Url.Action("GetMyEventsPartial", "Dashboard")">
+                    My Events
+                </button>
+            </li>
+        }
     </ul>
     
     <div class="tab-content dashboard-content" id="dashboardTabContent">
