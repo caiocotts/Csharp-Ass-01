@@ -1,0 +1,39 @@
+@model List<EventWithRevenueViewModel>
+
+<h4 class="mb-4">My Events</h4>
+
+@if (Model.Any())
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Title</th>
+                <th>Category</th>
+                <th>Event Date</th>
+                <th>Price per Ticket</th>
+                <th>Available Tickets</th>
+                <th>Revenue</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var anEvent in Model)
+            {
+                var availabilityLabel = TicketInventoryFormatter.FormatAvailability(anEvent.AvailableTickets);
+                <tr>
+                    <td>@anEvent.Id</td>
+                    <td>@anEvent.Title</td>
+                    <td>@anEvent.Category</td>
+                    <td>@anEvent.EventDate.ToString("yyyy-MM-dd")</td>
+                    <td>$@anEvent.PricePerTicket.ToString("F2")</td>
+                    <td>@availabilityLabel</td>
+                    <td>$@anEvent.TotalRevenue.ToString("F2")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <div class="alert alert-info">No events available.</div>
+}
