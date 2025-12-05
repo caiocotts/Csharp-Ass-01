@@ -101,6 +101,74 @@ public class DashboardController(AppDbContext context, UserManager<User> userMan
 
         return View(ticketDataList);
     }
+    
+    
+    // Partial View Endpoints for AJAX loading
+    [HttpGet]
+    public async Task<IActionResult> GetPurchaseHistoryPartial()
+    {
+        var user = await userManager.GetUserAsync(User);
+        var userId = user!.Id;
+
+        var purchases = context.Purchases
+            .Where(p => p.UserId == userId)
+            .ToList();
+
+        var ticketDataList = purchases
+            .Select(p => GetTicketDataFromPurchase(p.Id))
+            .ToList();
+
+        return PartialView("_PurchaseHistoryPartial", ticketDataList);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetMyTicketsPartial()
+    {
+        var user = await userManager.GetUserAsync(User);
+        var userId = user!.Id;
+
+        var purchases = context.Purchases
+            .Where(p => p.UserId == userId)
+            .ToList();
+
+        var ticketDataList = purchases
+            .Select(p => GetTicketDataFromPurchase(p.Id))
+            .ToList();
+
+        return PartialView("_MyTicketsPartial", ticketDataList);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetMyEventsPartial()
+    {
+        var user = await userManager.GetUserAsync(User);
+        var userId = user!.Id;
+
+        var purchasedEventIds = context.Purchases
+            .Where(p => p.UserId == userId)
+            .Select(p => p.EventId)
+            .ToList();
+
+        var eventsWithRevenue = context.Events
+            .Where(e => purchasedEventIds.Contains(e.Id))
+            .Select(e => new EventWithRevenueViewModel
+            {
+                Id = e.Id,
+                Title = e.Title,
+                Category = e.Category,
+                EventDate = e.EventDate,
+                PricePerTicket = e.PricePerTicket,
+                AvailableTickets = e.AvailableTickets,
+                OrganizerId = e.OrganizerId,
+                TotalRevenue = context.Purchases
+                    .Where(p => p.EventId == e.Id)
+                    .Sum(p => p.Cost)
+            })
+            .ToList();
+
+        return PartialView("_MyEventsPartial", eventsWithRevenue);
+    }
+// ---------------------------------------------
 
     public IActionResult viewQR()
     {
@@ -120,6 +188,6 @@ public class DashboardController(AppDbContext context, UserManager<User> userMan
         context.Update(purchase);
         context.SaveChanges();
 
-        return RedirectToAction("PurchaseHistory");
+        return RedirectToAction("Dashboard");
     }
 }

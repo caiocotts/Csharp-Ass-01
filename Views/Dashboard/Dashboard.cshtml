@@ -1,36 +1,68 @@
-﻿<!DOCTYPE html>
+﻿@{
+    ViewData["Title"] = "Dashboard";
+    ViewData["BodyClass"] = "dashboard-page";
+}
 
-<html>
-<head>
-    <title>dashboard landing </title>
-</head>
-<body>
-<ul>
-    <li class="nav-item">
-        <a class="nav-link text-dark" asp-area="" asp-controller="dashboard"
-           asp-action="PurchaseHistory">Purchase History</a>
-    </li>
+@section Styles {
+    <link rel="stylesheet" href="~/css/dashboard.css" asp-append-version="true"/>
+}
 
-    <li class="nav-item">
-        <a class="nav-link text-dark" asp-area="" asp-controller="dashboard"
-           asp-action="myTickets">My Tickets</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link text-dark" asp-area="" asp-controller="dashboard"
-           asp-action="MyEvents">Events</a>
-    </li>
+<div class="container-fluid py-4">
+    <h2 class="mb-4 text-light">Dashboard</h2>
+    
+    <ul class="nav nav-pills nav-justified mb-0 dashboard-tabs" id="dashboardTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="purchase-history-tab" data-bs-toggle="tab"
+                    data-bs-target="#purchase-history" type="button" role="tab"
+                    aria-controls="purchase-history" aria-selected="true"
+                    data-url="@Url.Action("GetPurchaseHistoryPartial", "Dashboard")">
+                Purchase History
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="my-tickets-tab" data-bs-toggle="tab"
+                    data-bs-target="#my-tickets" type="button" role="tab"
+                    aria-controls="my-tickets" aria-selected="false"
+                    data-url="@Url.Action("GetMyTicketsPartial", "Dashboard")">
+                My Tickets
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="my-events-tab" data-bs-toggle="tab"
+                    data-bs-target="#my-events" type="button" role="tab"
+                    aria-controls="my-events" aria-selected="false"
+                    data-url="@Url.Action("GetMyEventsPartial", "Dashboard")">
+                My Events
+            </button>
+        </li>
+    </ul>
+    
+    <div class="tab-content dashboard-content" id="dashboardTabContent">
+        <div class="tab-pane fade show active" id="purchase-history" role="tabpanel"
+             aria-labelledby="purchase-history-tab">
+            <div class="text-center py-4">
+                <div class="spinner-border text-light" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane fade" id="my-tickets" role="tabpanel" aria-labelledby="my-tickets-tab">
+            <div class="text-center py-4">
+                <div class="spinner-border text-light" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane fade" id="my-events" role="tabpanel" aria-labelledby="my-events-tab">
+            <div class="text-center py-4">
+                <div class="spinner-border text-light" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
-</ul>
-</body>
-</html>
-
-<style>
-    li {
-        width: fit-content;
-        margin-top: 20px;
-    }
-
-    ul {
-        list-style-type: none;
-    }
-</style>
+@section Scripts {
+    <script src="~/js/dashboard.js" asp-append-version="true"></script>
+}

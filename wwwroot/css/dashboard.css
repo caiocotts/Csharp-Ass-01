@@ -1,0 +1,71 @@
+/* Dashboard Dark Theme Styles */
+
+/* Override page background for dashboard */
+body.dashboard-page {
+    background-color: #2a2a2a !important;
+}
+
+/* Dark theme for dashboard tabs */
+#dashboardTabs.dashboard-tabs {
+    background-color: #3d3d3d !important;
+    border-radius: 8px 8px 0 0;
+    padding: 0.5rem 0.5rem 0;
+}
+
+#dashboardTabs .nav-link {
+    color: #b0b0b0 !important;
+    background-color: transparent !important;
+    border: none !important;
+    border-radius: 6px 6px 0 0;
+    padding: 0.75rem 1.5rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+#dashboardTabs .nav-link:hover {
+    color: #ffffff !important;
+    background-color: #4d4d4d !important;
+}
+
+#dashboardTabs .nav-link.active {
+    color: #ffffff !important;
+    background-color: #1e1e1e !important;
+}
+
+/* Dark theme for tab content */
+#dashboardTabContent.dashboard-content {
+    background-color: #1e1e1e !important;
+    border-radius: 0 0 8px 8px;
+    padding: 1.5rem;
+    min-height: 400px;
+    color: #e0e0e0 !important;
+}
+
+/* Table styling for dark theme */
+#dashboardTabContent .table {
+    color: #e0e0e0 !important;
+    --bs-table-bg: transparent;
+    --bs-table-striped-bg: rgba(255, 255, 255, 0.05);
+}
+
+#dashboardTabContent .table thead th {
+    color: #ffffff !important;
+    border-bottom-color: #444 !important;
+    font-weight: 600;
+}
+
+#dashboardTabContent .table td {
+    border-color: #333 !important;
+    color: #e0e0e0 !important;
+}
+
+#dashboardTabContent h4 {
+    color: #ffffff !important;
+}
+
+/* Alert styling */
+#dashboardTabContent .alert-info {
+    background-color: #1a3a4a !important;
+    border-color: #2a5a7a !important;
+    color: #8ecae6 !important;
+}
