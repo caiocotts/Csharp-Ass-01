@@ -5,19 +5,15 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Assignment01.Data;
 
-public class AppDbContext : IdentityDbContext<User>
+public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbContext<User>(options)
 {
-    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
-    {
-    }
-
     public DbSet<Event> Events { get; set; }
     public DbSet<Purchase> Purchases { get; set; }
     
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        base.OnModelCreating(modelBuilder); // apperantly we needed to add this 
+        base.OnModelCreating(modelBuilder); // Required for Identity tables
         
     
         modelBuilder.Entity<Event>()

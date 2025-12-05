@@ -1,6 +1,4 @@
-﻿@* @model ManageEventsViewModel *@
-@using Assignment01.Controllers
-@model List<DashboardController.eRev>
+﻿@model List<EventWithRevenueViewModel>
 
 @section Styles{
     <link rel="stylesheet" href="@Url.Content("~/css/ManageEvents.css")"/>
@@ -53,7 +51,7 @@
                             <td>@anEvent.EventDate.ToString("yyyy-MM-dd")</td>
                             <td>$@anEvent.PricePerTicket</td>
                             <td>@availabilityLabel</td>
-                            <td>$@anEvent.revenue</td>
+                            <td>$@anEvent.TotalRevenue</td>
                         </tr>
                     }
                     </tbody>

@@ -12,13 +12,13 @@ public static class EventQueryExtensions
         if (!string.IsNullOrWhiteSpace(filters.SearchString))
         {
             var search = $"%{filters.SearchString.Trim()}%";
-            source = source.Where(e => e.Title != null && EF.Functions.ILike(e.Title, search));
+            source = source.Where(e => EF.Functions.ILike(e.Title, search));
         }
 
         if (!string.IsNullOrWhiteSpace(filters.CategoryFilter))
         {
             var category = filters.CategoryFilter.Trim();
-            source = source.Where(e => e.Category != null && EF.Functions.ILike(e.Category, category));
+            source = source.Where(e => EF.Functions.ILike(e.Category, category));
         }
 
         var (startUtc, endUtcExclusive) = filters.ToUtcRange();

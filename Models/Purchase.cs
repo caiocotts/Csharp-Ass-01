@@ -1,4 +1,3 @@
-using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace Assignment01.Models;
@@ -19,12 +18,13 @@ public class Purchase
     public int Quantity { get; set; }
 
     [Required]
-    public string UserId { get; set; }
+    public string UserId { get; set; } = null!;
 
     [Required]
     public int EventId { get; set; }
 
     public Event Event { get; set; } = null!;
-    
+
+    [Range(0, 5)]
     public int PurchaseRating { get; set; }
 }

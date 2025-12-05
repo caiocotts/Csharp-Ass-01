@@ -83,16 +83,10 @@ public class TicketsController(AppDbContext context, UserManager<User> userManag
         return RedirectToAction(nameof(TicketPurchasing));
     }
 
-    private bool TryGetUserId(out int userId)
-    {
-        userId = 0;
-        var idValue = Request.Cookies["id"];
-        return int.TryParse(idValue, out userId);
-    }
-
     private string ResolveUserDisplayName()
     {
-        return TryGetUserId(out var userId) ? $"User #{userId}" : "Guest";
+        var user = userManager.GetUserAsync(User).Result;
+        return user?.FullName ?? user?.UserName ?? "Guest";
     }
 
     private void SetTicketAlert(string message, bool isError)

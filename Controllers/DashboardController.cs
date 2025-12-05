@@ -4,50 +4,32 @@ using Assignment01.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace Assignment01.Controllers;
 
 [Authorize]
 public class DashboardController(AppDbContext context, UserManager<User> userManager) : Controller
 {
-    public class TicketDataObject
+    /// <summary>
+    /// Converts a purchase record into a display-friendly TicketDataViewModel.
+    /// Joins data from Purchases, Events, and Users tables.
+    /// </summary>
+    private TicketDataViewModel GetTicketDataFromPurchase(int purchaseId)
     {
-        public DateTime PurchaseDate { get; set; }
-        public double TotalCost { get; set; }
-        public int Quantity { get; set; }
-        public string EventTitle { get; set; }
-        public DateTime EventDate { get; set; }
+        var purchase = context.Purchases.First(p => p.Id == purchaseId);
+        var eventEntity = context.Events.First(e => e.Id == purchase.EventId);
+        var user = context.Users.First(u => u.Id == purchase.UserId);
 
-        public string PurchaseFullName { get; set; }
-
-        public int PurchaseID { get; set; }
-    }
-
-    //gets all the tickets for this user
-    public TicketDataObject GetTicketDataFromPurchase(int purchaseID)
-    {
-        //the data models
-        var purchase = context.Purchases.FirstOrDefault(e => e.Id == purchaseID);
-        var thisEvent = context.Events.FirstOrDefault(e => e.Id == purchase.EventId);
-        var user = context.Users.FirstOrDefault(e => e.Id == purchase.UserId);
-
-        return new TicketDataObject
+        return new TicketDataViewModel
         {
-            //the actual data from each table
+            PurchaseId = purchaseId,
             PurchaseDate = purchase.Date,
             TotalCost = purchase.Cost,
             Quantity = purchase.Quantity,
-            EventTitle = thisEvent.Title,
-            EventDate = thisEvent.EventDate,
-            PurchaseFullName = user.FullName,
-            PurchaseID = purchaseID
+            EventTitle = eventEntity.Title,
+            EventDate = eventEntity.EventDate,
+            PurchaserFullName = user.FullName ?? ""
         };
-    }
-
-    public class eRev : Event
-    {
-        public double revenue { get; set; }
     }
 
     public IActionResult Dashboard()
@@ -59,20 +41,19 @@ public class DashboardController(AppDbContext context, UserManager<User> userMan
     public async Task<IActionResult> MyEvents()
     {
         var user = await userManager.GetUserAsync(User);
-        var userId = user.Id;
+        var userId = user!.Id;
 
-        // 1, get every id of an event that a user purchased
-        var eventIds = context.Purchases
+        // Get all event IDs that this user has purchased tickets for
+        var purchasedEventIds = context.Purchases
             .Where(p => p.UserId == userId)
             .Select(p => p.EventId)
             .ToList();
-        
-            
+
+        // Build view models with calculated revenue for each event
         var eventsWithRevenue = context.Events
-            .Where(e => eventIds.Contains(e.Id))
-            .Select(e => new eRev
+            .Where(e => purchasedEventIds.Contains(e.Id))
+            .Select(e => new EventWithRevenueViewModel
             {
-              // add the old values
                 Id = e.Id,
                 Title = e.Title,
                 Category = e.Category,
@@ -80,9 +61,7 @@ public class DashboardController(AppDbContext context, UserManager<User> userMan
                 PricePerTicket = e.PricePerTicket,
                 AvailableTickets = e.AvailableTickets,
                 OrganizerId = e.OrganizerId,
-
-                //add our value
-                revenue = context.Purchases
+                TotalRevenue = context.Purchases
                     .Where(p => p.EventId == e.Id)
                     .Sum(p => p.Cost)
             })
@@ -94,35 +73,34 @@ public class DashboardController(AppDbContext context, UserManager<User> userMan
     public async Task<IActionResult> PurchaseHistory()
     {
         var user = await userManager.GetUserAsync(User);
-        var userId = user.Id;
+        var userId = user!.Id;
 
-        // Get all purchases for the current user
-        var purchases = context.Purchases.Where(p => p.UserId == userId).ToList();
+        var purchases = context.Purchases
+            .Where(p => p.UserId == userId)
+            .ToList();
 
-        // Create a list of TicketDataObject to store the results
-        var ticketDataList = purchases.Select(purchase => GetTicketDataFromPurchase(purchase.Id)).ToList();
+        var ticketDataList = purchases
+            .Select(p => GetTicketDataFromPurchase(p.Id))
+            .ToList();
 
-        // Pass the populated list to the View
         return View(ticketDataList);
     }
 
     public async Task<IActionResult> MyTickets()
     {
         var user = await userManager.GetUserAsync(User);
-        var userId = user.Id;
+        var userId = user!.Id;
 
-        // Get all purchases for the current user
-        var purchases = context.Purchases.Where(p => p.UserId == userId).ToList();
+        var purchases = context.Purchases
+            .Where(p => p.UserId == userId)
+            .ToList();
 
-        // Create a list of TicketDataObject to store the results
-        var ticketDataList = purchases.Select(purchase => GetTicketDataFromPurchase(purchase.Id)).ToList();
+        var ticketDataList = purchases
+            .Select(p => GetTicketDataFromPurchase(p.Id))
+            .ToList();
 
         return View(ticketDataList);
     }
-
-    /*public async IActionResult downloadPDF() {
-
-    }*/
 
     public IActionResult viewQR()
     {
@@ -132,18 +110,16 @@ public class DashboardController(AppDbContext context, UserManager<User> userMan
     [HttpPost]
     public IActionResult SubmitRating(int purchaseId, int rating)
     {
-        // Validate the input again on the server side
-        if (rating < 1 || rating > 5)
+        if (rating is < 1 or > 5)
         {
             return BadRequest("Rating must be between 1 and 5");
         }
 
-        var purchase = context.Purchases.FirstOrDefault(e => e.Id == purchaseId);
+        var purchase = context.Purchases.First(p => p.Id == purchaseId);
         purchase.PurchaseRating = rating;
         context.Update(purchase);
         context.SaveChanges();
 
         return RedirectToAction("PurchaseHistory");
     }
-    
 }
