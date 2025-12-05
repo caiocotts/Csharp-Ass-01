@@ -124,7 +124,7 @@ namespace Assignment01.Areas.Identity.Pages.Account
                     if (user != null) {
                         // Log with Full Name and Email
                         _logger.LogInformation("User logged in: {FullName} ({Email}) ", 
-                            user.FullName, Input.Email, DateTime.UtcNow);
+                            user.FullName, Input.Email);
                     }
                     else {
                         //  if something weird happens

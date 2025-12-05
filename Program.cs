@@ -1,4 +1,3 @@
-using Assignment_1.Services;
 using Assignment01.Data;
 using Assignment01.Models;
 using Assignment01.Services;
@@ -65,7 +64,7 @@ public static class Program
             var userManager = services.GetRequiredService<UserManager<User>>();
             var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
 
-            string[] roleNames = { "Admin", "Organizer", "Attendee" };
+            string[] roleNames = ["Admin", "Organizer", "Attendee"];
             foreach (var roleName in roleNames)
             {
                 if (!await roleManager.RoleExistsAsync(roleName))

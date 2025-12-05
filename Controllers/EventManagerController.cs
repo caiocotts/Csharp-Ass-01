@@ -61,63 +61,83 @@ public class EventManagerController(AppDbContext context, UserManager<User> user
     public IActionResult Analytics() => View();
 
     [HttpGet]
-    public async Task<IActionResult> GetTicketData() {
+    public async Task<IActionResult> GetTicketData()
+    {
         var user = await userManager.GetUserAsync(User);
+        bool isAdmin = User.IsInRole("Admin");
 
-        var categorySales = User.IsInRole("Admin")
+        var baseQuery = isAdmin
             ? context.Events
-                .Select(e => new {
-                    category = e.Category,
-                    sold = e.Purchases.Sum(p => (int?)p.Quantity) ?? 0
+            : context.Events.Where(e => e.OrganizerId == user!.Id);
 
-                })
-                .GroupBy(e => e.category)
-                .Select(g => new {
-                    name = g.Key,
-                    sold = g.Sum(s => s.sold)
-                })
-                .OrderByDescending(s => s.sold)
-                .ToList()
+        var categorySales = baseQuery
+            .Select(e => new
+            {
+                category = e.Category,
+                sold = e.Purchases.Sum(p => (int?)p.Quantity) ?? 0
+            })
+            .GroupBy(e => e.category)
+            .Select(g => new
+            {
+                name = g.Key,
+                sold = g.Sum(s => s.sold)
+            })
+            .OrderByDescending(s => s.sold)
+            .ToList();
 
-            : context.Events
-                .Where(e => e.OrganizerId == user.Id)
-                .Select(e => new {
-                    category = e.Category,
-                    sold = e.Purchases.Sum(p => (int?)p.Quantity) ?? 0
-
-                })
-                .GroupBy(e => e.category)
-                .Select(g => new {
-                    name = g.Key,
-                    sold = g.Sum(s => s.sold)
-                })
-                .OrderByDescending(s => s.sold)
-                .ToList();
-        
-        return Json(categorySales); 
+        return Json(categorySales);
     }
     
 
     [HttpGet]
-    public async Task<IActionResult> GetMonthlyRevenueData() {
+    public async Task<IActionResult> GetMonthlyRevenueData()
+    {
         var user = await userManager.GetUserAsync(User);
-
         if (user == null)
             return Unauthorized();
 
         bool isAdmin = await userManager.IsInRoleAsync(user, "Admin");
-
         var now = DateTime.UtcNow;
 
-// Generate the past 3 full months (including the current month if needed)
-        var monthRanges = new[]
-        {
-            new { Start = new DateTime(now.Year, now.Month, 1, 0, 0, 0, DateTimeKind.Utc).AddMonths(-2), End = new DateTime(now.Year, now.Month, 1, 0, 0, 0, DateTimeKind.Utc).AddMonths(-1) },
-            new { Start = new DateTime(now.Year, now.Month, 1, 0, 0, 0, DateTimeKind.Utc).AddMonths(-1), End = new DateTime(now.Year, now.Month, 1, 0, 0, 0, DateTimeKind.Utc) },
-            new { Start = new DateTime(now.Year, now.Month, 1, 0, 0, 0, DateTimeKind.Utc), End = now }
-        };
+        // Build date ranges for the past 3 months (including current month)
+        var monthRanges = BuildLastThreeMonthRanges(now);
+        var revenues = CalculateRevenuesForMonths(monthRanges, isAdmin, user.Id);
 
-        double[] revenues = new double[3];
+        var result = monthRanges.Select((range, i) => new
+        {
+            Month = range.Start.ToString("MMMM yyyy"),
+            Revenue = revenues[i]
+        }).ToList();
+
+        return Json(result);
+    }
+
+    /// <summary>
+    /// Creates date ranges for the current month and the two preceding months.
+    /// Each range spans from the 1st of the month to the 1st of the next month.
+    /// </summary>
+    private static (DateTime Start, DateTime End)[] BuildLastThreeMonthRanges(DateTime now)
+    {
+        var firstOfCurrentMonth = new DateTime(now.Year, now.Month, 1, 0, 0, 0, DateTimeKind.Utc);
+
+        return
+        [
+            (firstOfCurrentMonth.AddMonths(-2), firstOfCurrentMonth.AddMonths(-1)),
+            (firstOfCurrentMonth.AddMonths(-1), firstOfCurrentMonth),
+            (firstOfCurrentMonth, now)
+        ];
+    }
+
+    /// <summary>
+    /// Calculates revenue for each month range. Admins see all revenue;
+    /// organizers only see revenue from their own events.
+    /// </summary>
+    private double[] CalculateRevenuesForMonths(
+        (DateTime Start, DateTime End)[] monthRanges,
+        bool isAdmin,
+        string userId)
+    {
+        var revenues = new double[monthRanges.Length];
 
         for (int i = 0; i < monthRanges.Length; i++)
         {
@@ -125,21 +145,14 @@ public class EventManagerController(AppDbContext context, UserManager<User> user
 
             if (!isAdmin)
             {
-                // Only include purchases for events organized by this user
-                query = query.Where(p => p.Event.OrganizerId == user.Id);
+                query = query.Where(p => p.Event.OrganizerId == userId);
             }
 
             query = query.Where(p => p.Date >= monthRanges[i].Start && p.Date < monthRanges[i].End);
-
             revenues[i] = query.Sum(p => p.Cost * p.Quantity);
         }
 
-        var result = monthRanges.Select((range, i) => new {
-            Month = range.Start.ToString("MMMM yyyy"), // e.g., "November 2025"
-            Revenue = revenues[i]
-        }).ToList();
-
-        return Json(result); 
+        return revenues;
     }
     
     

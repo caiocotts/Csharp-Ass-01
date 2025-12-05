@@ -1,4 +1,3 @@
-using Assignment01.Areas.Identity.Pages.Account;
 using Assignment01.Data;
 using Assignment01.Models;
 using Assignment01.Services;
@@ -6,14 +5,13 @@ using Assignment01.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Build.Framework;
 
 namespace Assignment01.Controllers;
 
 public class CartController(
     AppDbContext context,
     UserManager<User> userManager,
-    ILogger<LoginModel> logger,
+    ILogger<CartController> logger,
     ICartService cartService) : Controller
 {
     [HttpPost]
@@ -132,17 +130,19 @@ public class CartController(
             return RedirectToAction(nameof(Checkout));
         }
 
-        int uID = -1;
-        string title = "defualt";
-        double price = 1;
+        int lastEventId = -1;
+        string lastEventTitle = "";
+        double lastEventPrice = 0;
+
         foreach (var item in cart)
         {
-            var anEvent = context.Events.Find(item.EventId)!;
-            anEvent.AvailableTickets -= item.Quantity;
-            
-            uID = anEvent.Id;
-            title = anEvent.Title;
-            price = anEvent.PricePerTicket;
+            var eventEntity = context.Events.Find(item.EventId)!;
+            eventEntity.AvailableTickets -= item.Quantity;
+
+            lastEventId = eventEntity.Id;
+            lastEventTitle = eventEntity.Title;
+            lastEventPrice = eventEntity.PricePerTicket;
+
             var purchase = new Purchase
             {
                 Cost = item.Subtotal,
@@ -158,8 +158,11 @@ public class CartController(
         context.SaveChanges();
         cartService.ClearCart();
 
-        logger.LogInformation("UserID: {userID}, purchased from '{eventTitle}', cost: ${price} ", uID, title, price );
-        TempData["PurchaseSuccess"] = "true"; 
+        logger.LogInformation(
+            "User {UserId} purchased from '{EventTitle}' at ${Price}",
+            lastEventId, lastEventTitle, lastEventPrice);
+
+        TempData["PurchaseSuccess"] = "true";
         return RedirectToAction(nameof(Checkout));
     }
 

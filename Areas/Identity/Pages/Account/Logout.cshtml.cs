@@ -34,7 +34,7 @@ namespace Assignment01.Areas.Identity.Pages.Account
             if (user != null) {
                 // FIX 2: Changed message to "logged OUT"
                 _logger.LogInformation("User logged OUT: {FullName} ({Email}) ", 
-                    user.FullName, user.Email, DateTime.UtcNow);
+                    user.FullName, user.Email);
             }
             else {
                 // Fallback if user object is missing

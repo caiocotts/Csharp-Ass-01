@@ -6,7 +6,7 @@ using MimeKit;
 using Polly;
 using Polly.Retry;
 
-namespace Assignment_1.Services;
+namespace Assignment01.Services;
 
 // Required for SocketException
 // Required for Polly
@@ -77,7 +77,7 @@ public class EmailSender : IEmailSender
             // Connect to the SMTP host and port.
             await client.ConnectAsync(
                 smtp["Host"],
-                int.Parse(smtp["Port"]),
+                int.Parse(smtp["Port"]!),
                 MailKit.Security.SecureSocketOptions.SslOnConnect
             );
 
